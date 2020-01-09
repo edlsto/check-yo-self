@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: grid;
+  grid-template-areas:
+    "nav nav"
+    "dashboard cards";
+  grid-template-columns: 30% 70%;
+  grid-template-rows: 75px 1fr;
+  height: 100vh;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.dashboard {
+  background-color: red;
+  grid-area: dashboard;
+}
+
+.cards {
+  background-color: green;
+  grid-area: cards;
+}
+
+nav {
+  background-color: #1f1e3d;
+  grid-area: nav;
+  color: #fff;
+  font-weight: 800;
+  font-size: 2.5em;
+  text-transform: uppercase;
+  line-height: 1.8em;
+  padding: 0 .2em;
+}
+
+span {
+  color: #ffc30c;
+}
