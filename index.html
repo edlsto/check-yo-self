@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800&display=swap" rel="stylesheet">
+    <title>Check Yo' Self</title>
+  </head>
+  <body>
+    <nav>
+      <h1>Check <span>Yo'</span> Self</h1>
+      <div class="search-box">
+          <button type="button"><img src='./assets/search.svg'></button>
+        <input placeholder="Search" class="search-input"></input>
+      </div>
+    </nav>
+    <section class="dashboard">
+      <div class="task-title">
+        <label>Task Title</label>
+        <input class="dashboard-input"></input>
+      </div>
+      <div class="task-item">
+        <label>Task Item</label>
+        <input class="dashboard-input task-item-input"></input>
+        <button class="add">
+          <div class="plus-1"></div>
+          <div class="plus-2"></div>
+        </button>
+      </div>
+      <div class="make-task-clear-btns">
+        <button>Make Task List</button>
+        <button>Clear All</button>
+      </div>
+      <div class="line"></div>
+      <button class="urgency">Filter by Urgency</button>
+    </section>
+    <section class="cards">
+      <div class="card">
+        <h2>Task Title</h2>
+          <ul>
+            <li><img src="./assets/checkbox.svg">Don't ever play yourself</li>
+            <li><img src="./assets/checkbox.svg">Every chance I get, I water plants</li>
+            <li><img src="./assets/checkbox.svg">Lion! Cloth talk.</li>
+          </ul>
+          <div class="icon-row">
+            <div class="card-urgent-icon">
+              <img src="./assets/urgent.svg">
+              <p>Urgent</p>
+            </div>
+            <div class="card-delete-icon">
+              <img src="./assets/delete.svg">
+              <p>Delete</p>
+            </div>
+          </div>
+      </div>
+      <div class="card">
+        <h2>Task Title</h2>
+          <ul>
+            <li><img src="./assets/checkbox.svg">Don't ever play yourself</li>
+            <li><img src="./assets/checkbox.svg">Every chance I get, I water plants</li>
+            <li><img src="./assets/checkbox.svg">Lion! Cloth talk.</li>
+          </ul>
+          <div class="icon-row">
+            <div class="card-urgent-icon">
+              <img src="./assets/urgent.svg">
+              <p>Urgent</p>
+            </div>
+            <div class="card-delete-icon">
+              <img src="./assets/delete.svg">
+              <p>Delete</p>
+            </div>
+          </div>
+      </div>
+
+    </section>
+  </body>
+  <script type="text/javascript" src="task.js"></script>
+  <script type="text/javascript" src="todo-list.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+</html>
