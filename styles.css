@@ -1,6 +1,7 @@
 * {
   margin: 0;
   box-sizing: border-box;
+  padding: 0;
 }
 
 body {
@@ -15,12 +16,15 @@ body {
 }
 
 .dashboard {
-  background-color: red;
+  background-color: #587A8A;
   grid-area: dashboard;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1em;
 }
 
 .cards {
-  background-color: green;
+  background-color: #F3F6F7;
   grid-area: cards;
 }
 
@@ -42,6 +46,12 @@ h1 {
 }
 
 input {
+  height: 3em;
+  font-size: 1em;
+  padding-left: .7em;
+}
+
+.search-input {
   height: 100%;
   width: 20em;
   display: inline;
@@ -61,14 +71,92 @@ img {
 }
 
 .search-box {
-  background-color: #C8D3DA;
   height: 3em;
   display: flex;
-  align-items: center;
+  align-items: stretch;
+
+}
+
+.search-box button {
+  flex: 0 0 4em;
 }
 
 button {
   border: 0;
   background-color: #C8D3DA;
   outline: 0;
+}
+
+.dashboard-input {
+  margin-top: .5em;
+  width: 100%;
+}
+
+label {
+  color: #C8D3DA;
+  display: block;
+  margin-top: 2em;
+
+}
+
+
+.dashboard button {
+  background-color: #1f1f3d;
+  color: #ffffff;
+  height: 3em;
+  margin: 1em 0;
+  display: block;
+  width: 100%;
+  font-size: 1em;
+  font-weight: 800;
+}
+
+.make-task-clear-btns {
+  margin: 1em 0;
+}
+
+.line {
+  background-color: #46606D;
+  width: 108%;
+  height: .1em;
+  position: relative;
+  left: -1em
+}
+
+.dashboard .urgency {
+  margin-top: 2em;
+}
+
+.dashboard .add {
+  display: inline;
+  width: 3em;
+  margin: 0;
+  margin-top: .5em;
+  flex: 0 0 3em;
+  padding-left: .6em;
+}
+
+.task-item-input {
+  flex: 1 0 0;
+  vertical-align: top;
+}
+
+.plus-1,
+.plus-2 {
+  height: 1px;
+  width: 70%;
+  background-color: #fff;
+}
+
+.plus-2 {
+  transform: rotate(90deg)
+}
+
+.task-item {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.task-item label {
+  flex: 0 0 100%;
 }
