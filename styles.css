@@ -28,13 +28,47 @@ nav {
   background-color: #1f1e3d;
   grid-area: nav;
   color: #fff;
-  font-weight: 800;
+  padding: 0 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
   font-size: 2.5em;
+  display: inline;
   text-transform: uppercase;
-  line-height: 1.8em;
-  padding: 0 .2em;
+  font-weight: 800;
+}
+
+input {
+  height: 100%;
+  width: 20em;
+  display: inline;
+  font-size: 1em;
+  padding-left: .7em;
+  outline: 0;
 }
 
 span {
   color: #ffc30c;
+}
+
+img {
+  height: 2.4em;
+  display: inline;
+  padding: .2em .5em 0;
+}
+
+.search-box {
+  background-color: #C8D3DA;
+  height: 3em;
+  display: flex;
+  align-items: center;
+}
+
+button {
+  border: 0;
+  background-color: #C8D3DA;
+  outline: 0;
 }
