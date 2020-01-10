@@ -26,6 +26,9 @@ body {
 .cards {
   background-color: #F3F6F7;
   grid-area: cards;
+  padding: 2em;
+  display: flex;
+  align-items: flex-start;
 }
 
 nav {
@@ -159,4 +162,59 @@ label {
 
 .task-item label {
   flex: 0 0 100%;
+}
+
+.card {
+  background-color: #FAFDFF;
+  border: 1px solid #C7D3D8;
+  width: 45%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  margin: .7em;
+}
+
+h2 {
+  flex: 0 0 100%;
+  border-bottom: 1px solid #C7D3D8;
+  padding: .5em;
+}
+
+ul {
+  list-style-type: none;
+  border-bottom: 1px solid #C7D3D8;
+  padding: .5em 0;
+}
+
+li {
+  padding: .7em;
+}
+
+.icon-row {
+  display: flex;
+  justify-content: space-between;
+  padding: .5em;
+}
+
+.icon-row img {
+  height: 1.6em;
+}
+
+.icon-row p {
+  text-transform: uppercase;
+  color: #3C6577;
+  font-size: .8em;
+  margin-top: .3em;
+}
+
+.icon-row div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+li img {
+  height: 1.3em;
+  position: relative;
+  top: .2em
 }
