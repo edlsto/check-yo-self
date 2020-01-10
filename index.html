@@ -10,11 +10,29 @@
       <h1>Check <span>Yo'</span> Self</h1>
       <div class="search-box">
           <button type="button"><img src='./assets/search.svg'></button>
-        <input placeholder="Search"></input>
+        <input placeholder="Search" class="search-input"></input>
       </div>
-
     </nav>
-    <section class="dashboard"></section>
+    <section class="dashboard">
+      <div class="task-title">
+        <label>Task Title</label>
+        <input class="dashboard-input"></input>
+      </div>
+      <div class="task-item">
+        <label>Task Item</label>
+        <input class="dashboard-input task-item-input"></input>
+        <button class="add">
+          <div class="plus-1"></div>
+          <div class="plus-2"></div>
+        </button>
+      </div>
+      <div class="make-task-clear-btns">
+        <button>Make Task List</button>
+        <button>Clear All</button>
+      </div>
+      <div class="line"></div>
+      <button class="urgency">Filter by Urgency</button>
+    </section>
     <section class="cards"></section>
   </body>
   <script type="text/javascript" src="task.js"></script>
