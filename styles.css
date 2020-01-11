@@ -115,8 +115,7 @@ label {
 
 }
 
-
-.dashboard button {
+.dashboard-button {
   background-color: #1f1f3d;
   color: #ffffff;
   height: 3em;
@@ -139,17 +138,23 @@ label {
   left: -1em
 }
 
-.dashboard .urgency {
+.urgency {
   margin-top: 2em;
 }
 
-.dashboard .add {
+.add {
   display: inline;
   width: 3em;
   margin: 0;
   margin-top: .5em;
   flex: 0 0 3em;
   padding-left: .6em;
+  cursor: pointer;
+}
+
+button[disabled] {
+  background-color: #A5A5B9;
+  cursor: default;
 }
 
 .task-item-input {
@@ -242,7 +247,7 @@ li {
   display: flex;
   justify-content: space-between;
   padding: .5em;
-
+  border-top: 1px solid #C7D3D8;
 }
 
 .urgent-card .icon-row {
