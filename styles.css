@@ -4,6 +4,8 @@
   padding: 0;
 }
 
+/* LAYOUT */
+
 body,
 html {
   height: 100%;
@@ -37,6 +39,8 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
   grid-auto-rows: 10px;
 }
+
+/* Nav area styles */
 
 nav {
   background-color: #1f1e3d;
@@ -96,6 +100,8 @@ button {
   background-color: #C8D3DA;
   outline: 0;
 }
+
+/* DASHBOARD AREA STYLES */
 
 .dashboard-input {
   margin-top: .5em;
@@ -170,6 +176,8 @@ label {
 .task-item label {
   flex: 0 0 100%;
 }
+
+/* CARD AREA STYLES */
 
 .card {
   background-color: #FAFDFF;
