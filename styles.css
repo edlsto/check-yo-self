@@ -179,6 +179,18 @@ label {
 
 /* CARD AREA STYLES */
 
+.empty{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h3 {
+  font-weight: 400;
+  font-size: 2em;
+  color: gray;
+}
+
 .card {
   background-color: #FAFDFF;
   border: 1px solid #C7D3D8;
