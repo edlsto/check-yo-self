@@ -1,5 +1,4 @@
 var tasks = [];
-var taskLists = [];
 var addTaskButton = document.querySelector('.add');
 var addTaskInput = document.querySelector('.task-item-input');
 var taskListContainer = document.querySelector('.task-list-inner');
@@ -12,36 +11,44 @@ taskListContainer.addEventListener('click', function(){
   removeTask(event);
 });
 
-function makeTaskListHTML() {
+cardsSection.addEventListener('click', function(){
+  deleteCard(event);
+})
+
+function makeTaskListHTML(taskList) {
   var taskListHTML = '';
-  for (var i = 0; i < taskLists[taskLists.length - 1].tasks.length; i++) {
-    var task = taskLists[taskLists.length - 1].tasks[i].text;
+  for (var i = 0; i < taskList.tasks.length; i++) {
+    var task = taskList.tasks[i].text;
     var html = `<li><img src="./assets/checkbox.svg">${task}</li>`
     taskListHTML += html;
   }
   return taskListHTML;
 }
 
-function createCard() {
-
-  return `<div class="card">
-      <h2>${taskLists[taskLists.length - 1].title}</h2>
-      <div class="content">
-        <ul>
-          ${makeTaskListHTML()}
-        </ul>
-        </div>
-        <div class="icon-row">
-          <div class="card-urgent-icon">
-            <img src="./assets/urgent.svg">
-            <p>Urgent</p>
+function renderCardsHTML(allTaskLists) {
+  var cardsHTML = ''
+  for (var i = allTaskLists.length - 1; i >= 0; i--){
+    cardsHTML +=
+    `<div class="card">
+        <h2>${allTaskLists[i].title}</h2>
+        <div class="content">
+          <ul>
+            ${makeTaskListHTML(allTaskLists[i])}
+          </ul>
           </div>
-          <div class="card-delete-icon">
-            <img src="./assets/delete.svg">
-            <p>Delete</p>
+          <div class="icon-row">
+            <div class="card-urgent-icon">
+              <img src="./assets/urgent.svg">
+              <p>Urgent</p>
+            </div>
+            <div class="card-delete-icon">
+              <img src="./assets/delete.svg">
+              <p>Delete</p>
+            </div>
           </div>
-        </div>
-  </div>`
+    </div>`
+  }
+  return cardsHTML;
 }
 
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
@@ -50,18 +57,46 @@ makeTaskList.addEventListener('click', createTaskList)
 
 addTaskInput.addEventListener('keyup', validateTaskInput)
 
+function loadCards() {
+  cardsSection.classList.remove('empty');
+  var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
+  allTaskLists = reinstantiateAllTasksList(allTaskLists);
+  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+}
+
+loadCards();
+
+function reinstantiateAllTasksList(allTaskLists) {
+  var allTaskListsWithMethods = [];
+  allTaskLists.forEach(function(taskList){
+    allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks));
+  })
+  return allTaskListsWithMethods;
+}
+
+function deleteCard(e) {
+  if (e.target.parentElement.classList.contains('card-delete-icon')) {
+    var title = e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.innerText;
+    var card = e.target.parentElement.parentElement.parentElement;
+    var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
+    allTaskLists = reinstantiateAllTasksList(allTaskLists);
+    allTaskLists.forEach(function(taskList){
+      if (taskList.title === title) {
+        card.remove();
+        taskList.deleteFromStorage();
+      }
+    })
+  }
+}
+
 function createTaskList() {
   var taskList = new ToDoList(taskTitleInput.value, tasks);
-  taskLists.push(taskList);
+  taskList.saveToStorage();
   taskTitleInput.value = '';
   tasks = [];
   taskListContainer.innerHTML = '';
   cardsSection.classList.remove('empty');
-  if (taskLists.length === 1) {
-    cardsSection.innerHTML = createCard();
-  } else {
-    cardsSection.innerHTML += createCard();
-  }
+  loadCards();
   resizeAllGridItems();
   validateMakeTaskList();
 }
