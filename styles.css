@@ -188,9 +188,26 @@ label {
   justify-content: space-between;
 }
 
+.urgent-card {
+  background-color: #FFE89D;
+  border: 1px solid #FFC416;
+}
+
+.urgent-card .card-urgent-icon p {
+  color: #B23A23;
+}
+
+.urgent-card .card-delete-icon p {
+  color: #1F1F3D;
+}
+
 h2 {
   border-bottom: 1px solid #C7D3D8;
   padding: .5em;
+}
+
+.urgent-card h2 {
+  border-bottom: 1px solid #FFC416;
 }
 
 ul {
@@ -204,11 +221,20 @@ li {
   display: flex;
 }
 
+.done {
+  color: #3c6577;
+  font-style: italic;
+}
+
 .icon-row {
   display: flex;
   justify-content: space-between;
   padding: .5em;
-  border-top: 1px solid #C7D3D8;
+
+}
+
+.urgent-card .icon-row {
+  border-top: 1px solid #FFC416;
 }
 
 .icon-row img {
