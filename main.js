@@ -33,7 +33,7 @@ window.onload = setTimeout(function(){
 loadCards();
 
 function filterBySearch(task) {
-  return searchInput.value === task.title.slice(0, searchInput.value.length)
+  return searchInput.value.toLowerCase() === task.title.slice(0, searchInput.value.length).toLowerCase()
 }
 
 
