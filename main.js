@@ -29,31 +29,27 @@ window.onload = setTimeout(function(){
 loadCards();
 
 
-function toggleUrgent(card) {
+function toggleUrgent(card, matchedTaskList) {
   if (card.classList.contains('urgent-card')) {
     card.classList.remove('urgent-card')
   } else {
     card.classList.add('urgent-card')
   }
+  if (matchedTaskList.urgent === false) {
+    matchedTaskList.urgent = true;
+  } else {
+    matchedTaskList.urgent = false;
+  }
 }
 
 function makeUrgent(e) {
   if (e.target.parentElement.classList.contains('card-urgent-icon')) {
-    var card = e.target.parentElement.parentElement.parentElement;
-    toggleUrgent(card);
+    var card = e.target.parentElement.parentElement.parentElement
     var cardId = parseInt(event.target.parentElement.parentElement.parentElement.id);
     var allTaskLists = getAllSavedTasks();
     var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
-    if (matchedTaskList.urgent === false) {
-      matchedTaskList.urgent = true;
-    } else {
-      matchedTaskList.urgent = false;
-    }
-    console.log(matchedTaskList.urgent)
-
+    toggleUrgent(card, matchedTaskList);
     matchedTaskList.updateToDo();
-
-    // matchedTaskList.updateToDo();
   }
 }
 
@@ -79,21 +75,22 @@ function checkForEmpty(list) {
 function checkOffTask(event) {
   if (event.target.classList.contains('checkbox')) {
     toggleCheck();
-    var taskId = parseInt(event.target.id);
     var cardId = parseInt(event.target.parentElement.parentElement.parentElement.parentElement.id);
-    var allTaskLists = getAllSavedTasks();
-    var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
-    matchedTaskList.updateTask(taskId);
+    var matchedTaskList = getAllSavedTasks().filter(taskList => taskList.id === cardId)[0];
+    matchedTaskList.updateTask(parseInt(event.target.id));
     matchedTaskList.updateToDo();
-    var deleteBtn = event.target.parentElement.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling;
-    if (validateDelete(matchedTaskList)) {
-      deleteBtn.classList.add('active')
-    } else {
-      deleteBtn.classList.remove('active')
-    }
+    activateDeleteBtn(matchedTaskList);
   }
 }
 
+function activateDeleteBtn(matchedTaskList) {
+  var deleteBtn = event.target.parentElement.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling;
+  if (validateDelete(matchedTaskList)) {
+    deleteBtn.classList.add('active')
+  } else {
+    deleteBtn.classList.remove('active')
+  }
+}
 
 function validateDelete(taskList) {
   var validated = true;
