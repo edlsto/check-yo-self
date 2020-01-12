@@ -6,8 +6,10 @@ var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards');
 var clearBtn = document.querySelector('.clear-all');
-var searchInput = document.querySelector('.search-input')
+var searchInput = document.querySelector('.search-input');
+var filterUrgentBtn = document.querySelector('.urgency');
 
+filterUrgentBtn.addEventListener('click', toggleDisplayUrgentCards)
 searchInput.addEventListener('keyup', filterCards)
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
@@ -41,6 +43,21 @@ function filterCards() {
   cardsSection.innerHTML = renderCardsHTML(filteredTaskList);
   resizeAllGridItems();
 
+}
+
+function toggleDisplayUrgentCards() {
+  filterUrgentBtn.classList.toggle('active');
+  var allTaskLists = getAllSavedTasks();
+  if (filterUrgentBtn.classList.contains('active')) {
+    var urgentTaskList = allTaskLists.filter(function(task) {
+      return task.urgent
+    })
+    cardsSection.innerHTML = renderCardsHTML(urgentTaskList);
+    resizeAllGridItems();
+  } else {
+    cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+    resizeAllGridItems();
+  }
 }
 
 function toggleUrgent(card, matchedTaskList) {
@@ -81,8 +98,10 @@ function checkForEmpty(list) {
   if (list.length === 0){
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = '<h3>Create a to-do!</h3>';
+    filterUrgentBtn.setAttribute('disabled');
   } else {
     cardsSection.classList.remove('empty');
+    filterUrgentBtn.removeAttribute('disabled');
   }
 }
 
@@ -154,7 +173,6 @@ function getAllSavedTasks() {
 
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
-  console.log(allTaskLists)
   cardsSection.innerHTML = renderCardsHTML(allTaskLists);
   checkForEmpty(allTaskLists);
 }
