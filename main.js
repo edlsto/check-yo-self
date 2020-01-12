@@ -30,6 +30,41 @@ cardsSection.addEventListener('click', function(){
   makeUrgent(event);
 })
 
+cardsSection.addEventListener('keypress', function(){
+  editContent(event);
+})
+
+function editContent(e) {
+  if ((e.target.classList.contains('card-title')
+  || e.target.classList.contains('task-item'))
+   && e.key === 'Enter') {
+    var cardId = parseInt(e.target.closest('.card').id);
+    var allTaskLists = getAllSavedTasks();
+    var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
+    makeEdits(e, matchedTaskList)
+    e.preventDefault();
+    e.target.blur();
+  }
+}
+
+function makeEdits(e, matchedTaskList) {
+  if (e.target.classList.contains('card-title')) {
+    matchedTaskList.title = e.target.innerText;
+    matchedTaskList.updateToDo();
+  } else if (e.target.classList.contains('task-item')) {
+    var taskId = parseInt(e.target.firstElementChild.id);
+    var matchedTask = matchedTaskList.tasks.filter(function(task) {
+      return taskId === task.id;
+    })[0]
+    matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].text = e.target.innerText;
+    matchedTaskList.updateToDo();
+  }
+}
+
+function editTask() {
+
+}
+
 setTimeout(function(){
   resizeAllGridItems();
 }, 30);
@@ -115,9 +150,18 @@ function checkForEmpty(list) {
 function checkOffTask(event) {
   if (event.target.classList.contains('checkbox')) {
     toggleCheck();
+    var taskId = parseInt(event.target.id);
     var cardId = parseInt(event.target.parentElement.parentElement.parentElement.parentElement.id);
     var matchedTaskList = getAllSavedTasks().filter(taskList => taskList.id === cardId)[0];
-    matchedTaskList.updateTask(parseInt(event.target.id));
+
+    var matchedTask = matchedTaskList.tasks.filter(function(task) {
+      return taskId === task.id;
+    })[0]
+    matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done = !matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done
+
+    console.log(matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done)
+
+    // matchedTaskList.updateTask(parseInt(event.target.id));
     matchedTaskList.updateToDo();
     activateDeleteBtn(matchedTaskList);
   }
@@ -188,7 +232,7 @@ function makeTaskListHTML(taskList) {
   var taskListHTML = '';
   for (var i = 0; i < taskList.tasks.length; i++) {
     var task = taskList.tasks[i].text;
-    var html = `<li${taskList.tasks[i].done === false ? '' : ' class="checked"'}><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}">${task}</li>`
+    var html = `<li contenteditable="true" class="task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}">${task}</li>`
     taskListHTML += html;
   }
   return taskListHTML;
@@ -225,7 +269,7 @@ function renderCardsHTML(allTaskLists) {
     cardsHTML +=
     `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
       <div class="content">
-        <h2>${allTaskLists[i].title}</h2>
+        <h2 contenteditable="true" class="card-title">${allTaskLists[i].title}</h2>
           <ul>
             ${makeTaskListHTML(allTaskLists[i])}
           </ul>
