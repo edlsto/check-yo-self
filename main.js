@@ -103,7 +103,7 @@ function filterByTask(taskList) {
 function checkForTaskMatch (taskList) {
   var matched = false;
   for (var i = 0; i < taskList.tasks.length; i++){
-    if (taskList.tasks[i].text.includes(searchInput.value)) {
+    if (taskList.tasks[i].text.toLowerCase().includes(searchInput.value.toLowerCase())) {
       matched = true;
     }
   }
