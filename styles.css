@@ -238,7 +238,7 @@ li {
   display: flex;
 }
 
-.done {
+.checked {
   color: #3c6577;
   font-style: italic;
 }

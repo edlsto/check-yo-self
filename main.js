@@ -6,116 +6,24 @@ var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards')
 
+taskTitleInput.addEventListener('keyup', validateMakeTaskList)
+makeTaskList.addEventListener('click', createTaskList)
+addTaskInput.addEventListener('keyup', validateTaskInput)
 addTaskButton.addEventListener('click', addTask);
+cardsSection.addEventListener("resize", resizeAllGridItems);
 taskListContainer.addEventListener('click', function(){
-  removeTask(event);
+  removeTaskFromDrafts(event);
 });
-
 cardsSection.addEventListener('click', function(){
   deleteCard(event);
+  checkOffTask(event);
 })
 
-function makeTaskListHTML(taskList) {
-  var taskListHTML = '';
-  for (var i = 0; i < taskList.tasks.length; i++) {
-    var task = taskList.tasks[i].text;
-    var html = `<li><img src="./assets/checkbox.svg">${task}</li>`
-    taskListHTML += html;
-  }
-  return taskListHTML;
-}
-
-function renderCardsHTML(allTaskLists) {
-  var cardsHTML = ''
-  for (var i = allTaskLists.length - 1; i >= 0; i--){
-    cardsHTML +=
-    `<div class="card">
-        <h2>${allTaskLists[i].title}</h2>
-        <div class="content">
-          <ul>
-            ${makeTaskListHTML(allTaskLists[i])}
-          </ul>
-          </div>
-          <div class="icon-row">
-            <div class="card-urgent-icon">
-              <img src="./assets/urgent.svg">
-              <p>Urgent</p>
-            </div>
-            <div class="card-delete-icon">
-              <img src="./assets/delete.svg">
-              <p>Delete</p>
-            </div>
-          </div>
-    </div>`
-  }
-  return cardsHTML;
-}
-
-taskTitleInput.addEventListener('keyup', validateMakeTaskList)
-
-makeTaskList.addEventListener('click', createTaskList)
-
-addTaskInput.addEventListener('keyup', validateTaskInput)
-
-function loadCards() {
-  cardsSection.classList.remove('empty');
-  var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
-  allTaskLists = reinstantiateAllTasksList(allTaskLists);
-  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
-}
+window.onload = setTimeout(function(){
+  resizeAllGridItems();
+}, 30);
 
 loadCards();
-
-function reinstantiateAllTasksList(allTaskLists) {
-  var allTaskListsWithMethods = [];
-  allTaskLists.forEach(function(taskList){
-    allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks));
-  })
-  return allTaskListsWithMethods;
-}
-
-function deleteCard(e) {
-  if (e.target.parentElement.classList.contains('card-delete-icon')) {
-    var title = e.target.parentElement.parentElement.previousElementSibling.previousElementSibling.innerText;
-    var card = e.target.parentElement.parentElement.parentElement;
-    var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
-    allTaskLists = reinstantiateAllTasksList(allTaskLists);
-    allTaskLists.forEach(function(taskList){
-      if (taskList.title === title) {
-        card.remove();
-        taskList.deleteFromStorage();
-      }
-    })
-  }
-}
-
-function createTaskList() {
-  var taskList = new ToDoList(taskTitleInput.value, tasks);
-  taskList.saveToStorage();
-  taskTitleInput.value = '';
-  tasks = [];
-  taskListContainer.innerHTML = '';
-  cardsSection.classList.remove('empty');
-  loadCards();
-  resizeAllGridItems();
-  validateMakeTaskList();
-}
-
-function validateTaskInput() {
-  if (addTaskInput.value !== '') {
-    addTaskButton.removeAttribute('disabled');
-  } else {
-    addTaskButton.setAttribute('disabled', 'disabled');
-  }
-}
-
-function validateMakeTaskList() {
-  if (tasks.length > 0 && taskTitleInput.value !== '') {
-    makeTaskList.removeAttribute('disabled')
-  } else {
-    makeTaskList.setAttribute('disabled', 'disabled');
-  }
-}
 
 function addTask() {
   var task = new Task(addTaskInput.value)
@@ -127,7 +35,113 @@ function addTask() {
   validateMakeTaskList()
 }
 
-function removeTaskFromTasks(e) {
+function checkForEmpty(list) {
+  if (list.length === 0){
+    cardsSection.classList.add('empty');
+    cardsSection.innerHTML = '<h3>Create a to-do!</h3>';
+  } else {
+    cardsSection.classList.remove('empty');
+  }
+}
+
+function checkOffTask(event) {
+  if (event.target.classList.contains('checkbox')) {
+    toggleCheck();
+    var taskId = parseInt(event.target.id);
+    var cardId = parseInt(event.target.parentElement.parentElement.parentElement.parentElement.id);
+    var allTaskLists = getAllSavedTasks();
+    var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
+    matchedTaskList.updateTask(taskId);
+    matchedTaskList.updateToDo();
+    var deleteBtn = event.target.parentElement.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling;
+    if (validateDelete(matchedTaskList)) {
+      deleteBtn.classList.add('active')
+    } else {
+      deleteBtn.classList.remove('active')
+    }
+  }
+}
+
+
+function validateDelete(taskList) {
+  var validated = true;
+  taskList.tasks.forEach(function(task) {
+    if (task.done === false) {
+      validated = false;
+    }
+  })
+  return validated;
+}
+
+function resetTasks() {
+  taskTitleInput.value = '';
+  tasks = [];
+  taskListContainer.innerHTML = '';
+}
+
+function createTaskList() {
+  var taskList = new ToDoList(taskTitleInput.value, tasks);
+  taskList.saveToStorage();
+  resetTasks();
+  loadCards();
+  resizeAllGridItems();
+  validateMakeTaskList();
+}
+
+function deleteCard(e) {
+  if (e.target.parentElement.classList.contains('card-delete-icon') && e.target.parentElement.classList.contains('active')) {
+    var selectedCard = e.target.parentElement.parentElement.parentElement;
+    selectedCard.remove()
+    var allTaskLists = getAllSavedTasks();
+    allTaskLists.forEach(function(taskList, i){
+      if (taskList.id === parseInt(selectedCard.id)) {
+        taskList.deleteFromStorage();
+      }
+    })
+    allTaskLists = getAllSavedTasks();
+    checkForEmpty(allTaskLists);
+  }
+}
+
+function getAllSavedTasks() {
+  var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
+  allTaskLists = reinstantiateAllTasksList(allTaskLists);
+  return allTaskLists;
+}
+
+function loadCards() {
+  var allTaskLists = getAllSavedTasks();
+  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  checkForEmpty(allTaskLists);
+}
+
+function makeTaskListHTML(taskList) {
+  var taskListHTML = '';
+  for (var i = 0; i < taskList.tasks.length; i++) {
+    var task = taskList.tasks[i].text;
+    var html = `<li${taskList.tasks[i].done === false ? '' : ' class="checked"'}><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}">${task}</li>`
+    taskListHTML += html;
+  }
+  return taskListHTML;
+}
+
+function reinstantiateAllTasksList(allTaskLists) {
+  var allTaskListsWithMethods = [];
+  allTaskLists.forEach(function(taskList){
+    allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks, taskList.id));
+  })
+  return allTaskListsWithMethods;
+}
+
+function removeTaskFromDrafts(e) {
+  if (e.target.classList.contains('delete-task')) {
+    removeTaskFromDraftModeStorage(e);
+    e.target.parentNode.remove();
+  };
+  validateMakeTaskList()
+}
+
+function removeTaskFromDraftModeStorage(e) {
   tasks.forEach(function(task, i){
     if (e.target.parentElement.innerText === task.text) {
       tasks.splice(i, 1)
@@ -135,25 +149,30 @@ function removeTaskFromTasks(e) {
   });
 }
 
-function removeTask(e) {
-  if (e.target.classList.contains('delete-task')) {
-    removeTaskFromTasks(e);
-    e.target.parentNode.remove();
-  };
-  validateMakeTaskList()
-
-}
-
-
-var grid = document.querySelector(".cards");
-
-grid.addEventListener("resize", resizeAllGridItems);
-
-function resizeGridItem(item){
-  rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
-  rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
-  item.style.gridRowEnd = "span "+rowSpan;
+function renderCardsHTML(allTaskLists) {
+  var cardsHTML = ''
+  for (var i = allTaskLists.length - 1; i >= 0; i--){
+    cardsHTML +=
+    `<div class="card" id="${allTaskLists[i].id}">
+        <h2>${allTaskLists[i].title}</h2>
+        <div class="content">
+          <ul>
+            ${makeTaskListHTML(allTaskLists[i])}
+          </ul>
+          </div>
+          <div class="icon-row">
+            <div class="card-urgent-icon">
+              <img src="./assets/urgent.svg">
+              <p>Urgent</p>
+            </div>
+            <div class="card-delete-icon${validateDelete(allTaskLists[i]) ? ' active' : ''}">
+              <img src="./assets/delete.svg">
+              <p>Delete</p>
+            </div>
+          </div>
+    </div>`
+  }
+  return cardsHTML;
 }
 
 function resizeAllGridItems(){
@@ -162,6 +181,36 @@ function resizeAllGridItems(){
     resizeGridItem(allItems[i]);
   }
 }
-window.onload = setTimeout(function(){
-  resizeAllGridItems();
-}, 30);
+
+function resizeGridItem(item){
+  rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
+  rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
+  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
+  item.style.gridRowEnd = "span "+rowSpan;
+}
+
+function validateMakeTaskList() {
+  if (tasks.length > 0 && taskTitleInput.value !== '') {
+    makeTaskList.removeAttribute('disabled')
+  } else {
+    makeTaskList.setAttribute('disabled', 'disabled');
+  }
+}
+
+function validateTaskInput() {
+  if (addTaskInput.value !== '') {
+    addTaskButton.removeAttribute('disabled');
+  } else {
+    addTaskButton.setAttribute('disabled', 'disabled');
+  }
+}
+
+function toggleCheck() {
+  if (event.target.parentElement.classList.contains('checked')) {
+    event.target.parentElement.classList.remove('checked');
+    event.target.src = './assets/checkbox.svg';
+  } else {
+    event.target.parentElement.classList.add('checked')
+    event.target.src = './assets/checkbox-active.svg';
+  }
+}
