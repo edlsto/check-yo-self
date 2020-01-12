@@ -101,6 +101,40 @@ button {
   outline: 0;
 }
 
+.drop-down {
+  height: 1.5em;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  width: 23.75em;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  right: 0;
+  top: 45px;
+
+}
+
+.show {
+  display: block;
+}
+
+.dropdown-content p {
+  color: black;
+  font-size: 1em;
+  height: 3em;
+  text-align: center;
+  line-height: 3em;
+}
+
+.dropdown {
+  position: relative;
+  cursor: default;
+  /* display: inline-block; */
+}
+
 /* DASHBOARD AREA STYLES */
 
 .dashboard-input {
