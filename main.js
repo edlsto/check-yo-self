@@ -124,16 +124,23 @@ function filterByTitleAndTask(taskList) {
   console.log(matched)
 }
 
+function filterUrgentSearch(list){
+  if (filterUrgentBtn.classList.contains('active')){
+    list = list.filter(function(task) {
+      return task.urgent
+    })
+  }
+  return list;
+}
+
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
   var filteredTasks = allTaskLists.filter(checkForTaskMatch);
   var filteredTaskList = allTaskLists.filter(filterByTitle);
   var filteredByTitleAndTask = allTaskLists.filter(filterByTitleAndTask);
-  if (filterUrgentBtn.classList.contains('active')){
-    filteredTaskList = filteredTaskList.filter(function(task) {
-      return task.urgent
-    })
-  }
+  filteredTasks = filterUrgentSearch(filteredTasks)
+  filteredTaskList = filterUrgentSearch(filteredTaskList)
+  filteredByTitleAndTask = filterUrgentSearch(filteredByTitleAndTask)
   if (searchInput.placeholder === 'Filter by task') {
     renderAndResizeCards(filteredTasks)
   } else if (searchInput.placeholder === 'Filter by title') {
@@ -141,7 +148,6 @@ function filterCards() {
   } else if (searchInput.placeholder === 'Search all' || searchInput.placeholder === 'Search' ) {
     renderAndResizeCards(filteredByTitleAndTask)
   }
-
 }
 
 function toggleDisplayUrgentCards() {
