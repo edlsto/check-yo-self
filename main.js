@@ -6,7 +6,13 @@ var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards');
 var clearBtn = document.querySelector('.clear-all');
-var searchInput = document.querySelector('.search-input')
+var searchInput = document.querySelector('.search-input');
+var filterUrgentBtn = document.querySelector('.urgency');
+
+filterUrgentBtn.addEventListener('click', function() {
+  toggleDisplayUrgentCards();
+  filterCards();
+})
 
 searchInput.addEventListener('keyup', filterCards)
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
@@ -24,23 +30,41 @@ cardsSection.addEventListener('click', function(){
   makeUrgent(event);
 })
 
-window.onload = setTimeout(function(){
+setTimeout(function(){
   resizeAllGridItems();
 }, 30);
 
 loadCards();
 
 function filterBySearch(task) {
-  return searchInput.value === task.title.slice(0, searchInput.value.length)
+  return task.title.toLowerCase().includes(searchInput.value.toLowerCase())
 }
 
 
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
   var filteredTaskList = allTaskLists.filter(filterBySearch)
-  cardsSection.innerHTML = renderCardsHTML(filteredTaskList);
-  resizeAllGridItems();
+  if (filterUrgentBtn.classList.contains('active')){
+    filteredTaskList = filteredTaskList.filter(function(task) {
+      return task.urgent
+    })
+  }
 
+  renderAndResizeCards(filteredTaskList)
+
+}
+
+function toggleDisplayUrgentCards() {
+  filterUrgentBtn.classList.toggle('active');
+  var allTaskLists = getAllSavedTasks();
+  if (filterUrgentBtn.classList.contains('active')) {
+    var urgentTaskList = allTaskLists.filter(function(task) {
+      return task.urgent
+    })
+    renderAndResizeCards(urgentTaskList)
+  } else {
+    renderAndResizeCards(allTaskLists)
+  }
 }
 
 function toggleUrgent(card, matchedTaskList) {
@@ -81,8 +105,10 @@ function checkForEmpty(list) {
   if (list.length === 0){
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = '<h3>Create a to-do!</h3>';
+    filterUrgentBtn.setAttribute('disabled');
   } else {
     cardsSection.classList.remove('empty');
+    filterUrgentBtn.removeAttribute('disabled');
   }
 }
 
@@ -154,7 +180,6 @@ function getAllSavedTasks() {
 
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
-  console.log(allTaskLists)
   cardsSection.innerHTML = renderCardsHTML(allTaskLists);
   checkForEmpty(allTaskLists);
 }
@@ -199,8 +224,8 @@ function renderCardsHTML(allTaskLists) {
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     cardsHTML +=
     `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
+      <div class="content">
         <h2>${allTaskLists[i].title}</h2>
-        <div class="content">
           <ul>
             ${makeTaskListHTML(allTaskLists[i])}
           </ul>
@@ -220,6 +245,11 @@ function renderCardsHTML(allTaskLists) {
   return cardsHTML;
 }
 
+function renderAndResizeCards(allTaskLists) {
+  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  resizeAllGridItems();
+}
+
 function resizeAllGridItems(){
   var allItems = document.querySelectorAll(".card");
   for (var i = 0; i < allItems.length; i++) {
@@ -230,7 +260,7 @@ function resizeAllGridItems(){
 function resizeGridItem(item){
   rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
   rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
+  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+64.4219)/(rowHeight+rowGap));
   item.style.gridRowEnd = "span "+rowSpan;
 }
 
