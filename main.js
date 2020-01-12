@@ -229,7 +229,7 @@ function validateMakeTaskList() {
   } else {
     makeTaskList.setAttribute('disabled', 'disabled');
   }
-  if (tasks.length > 0) {
+  if (tasks.length > 0 || taskTitleInput.value !== '') {
     clearBtn.removeAttribute('disabled')
   }
 }
