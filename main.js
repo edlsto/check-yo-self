@@ -4,7 +4,8 @@ var addTaskInput = document.querySelector('.task-item-input');
 var taskListContainer = document.querySelector('.task-list-inner');
 var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
-var cardsSection = document.querySelector('.cards')
+var cardsSection = document.querySelector('.cards');
+
 
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
@@ -17,6 +18,7 @@ taskListContainer.addEventListener('click', function(){
 cardsSection.addEventListener('click', function(){
   deleteCard(event);
   checkOffTask(event);
+  makeUrgent(event);
 })
 
 window.onload = setTimeout(function(){
@@ -24,6 +26,34 @@ window.onload = setTimeout(function(){
 }, 30);
 
 loadCards();
+
+function toggleUrgent(card) {
+  if (card.classList.contains('urgent-card')) {
+    card.classList.remove('urgent-card')
+  } else {
+    card.classList.add('urgent-card')
+  }
+}
+
+function makeUrgent(e) {
+  if (e.target.parentElement.classList.contains('card-urgent-icon')) {
+    var card = e.target.parentElement.parentElement.parentElement;
+    toggleUrgent(card);
+    var cardId = parseInt(event.target.parentElement.parentElement.parentElement.id);
+    var allTaskLists = getAllSavedTasks();
+    var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
+    if (matchedTaskList.urgent === false) {
+      matchedTaskList.urgent = true;
+    } else {
+      matchedTaskList.urgent = false;
+    }
+    console.log(matchedTaskList.urgent)
+
+    matchedTaskList.updateToDo();
+
+    // matchedTaskList.updateToDo();
+  }
+}
 
 function addTask() {
   var task = new Task(addTaskInput.value)
@@ -111,6 +141,7 @@ function getAllSavedTasks() {
 
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
+  console.log(allTaskLists)
   cardsSection.innerHTML = renderCardsHTML(allTaskLists);
   checkForEmpty(allTaskLists);
 }
@@ -128,8 +159,9 @@ function makeTaskListHTML(taskList) {
 function reinstantiateAllTasksList(allTaskLists) {
   var allTaskListsWithMethods = [];
   allTaskLists.forEach(function(taskList){
-    allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks, taskList.id));
+    allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks, taskList.id, taskList.urgent));
   })
+
   return allTaskListsWithMethods;
 }
 
@@ -153,7 +185,7 @@ function renderCardsHTML(allTaskLists) {
   var cardsHTML = ''
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     cardsHTML +=
-    `<div class="card" id="${allTaskLists[i].id}">
+    `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
         <h2>${allTaskLists[i].title}</h2>
         <div class="content">
           <ul>
