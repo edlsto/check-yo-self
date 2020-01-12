@@ -182,6 +182,7 @@ button[disabled] {
 .task-item {
   display: flex;
   flex-wrap: wrap;
+  outline: 0;
 }
 
 .task-item label {
@@ -227,6 +228,7 @@ h3 {
 h2 {
   border-bottom: 1px solid #C7D3D8;
   padding: .5em;
+  outline: 0;
 }
 
 .urgent-card h2 {
