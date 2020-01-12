@@ -182,7 +182,6 @@ button[disabled] {
 .task-item {
   display: flex;
   flex-wrap: wrap;
-  outline: 0;
 }
 
 .task-item label {
@@ -190,6 +189,14 @@ button[disabled] {
 }
 
 /* CARD AREA STYLES */
+
+.card-task-item {
+  outline: 0;
+}
+
+.card-task-item p {
+  flex: 1 1 0;
+}
 
 .empty{
   display: flex;
