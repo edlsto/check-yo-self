@@ -278,6 +278,7 @@ li {
   color: #3C6577;
   font-size: .8em;
   margin-top: .3em;
+  cursor: default;
 }
 
 .icon-row div {
@@ -288,7 +289,7 @@ li {
 
 li img {
   height: 1.3em;
-
+  cursor: default;
 }
 
 .dashboard li {
