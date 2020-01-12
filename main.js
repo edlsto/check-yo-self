@@ -5,21 +5,23 @@ var taskListContainer = document.querySelector('.task-list-inner');
 var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards')
-var grid = document.querySelector(".cards");
 
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
 addTaskInput.addEventListener('keyup', validateTaskInput)
 addTaskButton.addEventListener('click', addTask);
-
+cardsSection.addEventListener("resize", resizeAllGridItems);
 taskListContainer.addEventListener('click', function(){
-  removeTask(event);
+  removeTaskFromDrafts(event);
 });
-
 cardsSection.addEventListener('click', function(){
   deleteCard(event);
   checkOffTask(event);
 })
+
+window.onload = setTimeout(function(){
+  resizeAllGridItems();
+}, 30);
 
 loadCards();
 
@@ -37,6 +39,8 @@ function checkForEmpty(list) {
   if (list.length === 0){
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = '<h3>Create a to-do!</h3>';
+  } else {
+    cardsSection.classList.remove('empty');
   }
 }
 
@@ -49,28 +53,48 @@ function checkOffTask(event) {
     var matchedTaskList = allTaskLists.filter(taskList => taskList.id === cardId)[0];
     matchedTaskList.updateTask(taskId);
     matchedTaskList.updateToDo();
+    var deleteBtn = event.target.parentElement.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling;
+    if (validateDelete(matchedTaskList)) {
+      deleteBtn.classList.add('active')
+    } else {
+      deleteBtn.classList.remove('active')
+    }
   }
+}
+
+
+function validateDelete(taskList) {
+  var validated = true;
+  taskList.tasks.forEach(function(task) {
+    if (task.done === false) {
+      validated = false;
+    }
+  })
+  return validated;
+}
+
+function resetTasks() {
+  taskTitleInput.value = '';
+  tasks = [];
+  taskListContainer.innerHTML = '';
 }
 
 function createTaskList() {
   var taskList = new ToDoList(taskTitleInput.value, tasks);
   taskList.saveToStorage();
-  taskTitleInput.value = '';
-  tasks = [];
-  taskListContainer.innerHTML = '';
-  cardsSection.classList.remove('empty');
+  resetTasks();
   loadCards();
   resizeAllGridItems();
   validateMakeTaskList();
 }
 
 function deleteCard(e) {
-  if (e.target.parentElement.classList.contains('card-delete-icon')) {
-    var card = e.target.parentElement.parentElement.parentElement;
-    card.remove()
+  if (e.target.parentElement.classList.contains('card-delete-icon') && e.target.parentElement.classList.contains('active')) {
+    var selectedCard = e.target.parentElement.parentElement.parentElement;
+    selectedCard.remove()
     var allTaskLists = getAllSavedTasks();
     allTaskLists.forEach(function(taskList, i){
-      if (taskList.id === parseInt(card.id)) {
+      if (taskList.id === parseInt(selectedCard.id)) {
         taskList.deleteFromStorage();
       }
     })
@@ -95,7 +119,7 @@ function makeTaskListHTML(taskList) {
   var taskListHTML = '';
   for (var i = 0; i < taskList.tasks.length; i++) {
     var task = taskList.tasks[i].text;
-    var html = `<li><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox${taskList.tasks[i].done === false ? '' : ' checked'}" id="${taskList.tasks[i].id}">${task}</li>`
+    var html = `<li${taskList.tasks[i].done === false ? '' : ' class="checked"'}><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}">${task}</li>`
     taskListHTML += html;
   }
   return taskListHTML;
@@ -109,15 +133,15 @@ function reinstantiateAllTasksList(allTaskLists) {
   return allTaskListsWithMethods;
 }
 
-function removeTask(e) {
+function removeTaskFromDrafts(e) {
   if (e.target.classList.contains('delete-task')) {
-    removeTaskFromTasks(e);
+    removeTaskFromDraftModeStorage(e);
     e.target.parentNode.remove();
   };
   validateMakeTaskList()
 }
 
-function removeTaskFromTasks(e) {
+function removeTaskFromDraftModeStorage(e) {
   tasks.forEach(function(task, i){
     if (e.target.parentElement.innerText === task.text) {
       tasks.splice(i, 1)
@@ -141,7 +165,7 @@ function renderCardsHTML(allTaskLists) {
               <img src="./assets/urgent.svg">
               <p>Urgent</p>
             </div>
-            <div class="card-delete-icon">
+            <div class="card-delete-icon${validateDelete(allTaskLists[i]) ? ' active' : ''}">
               <img src="./assets/delete.svg">
               <p>Delete</p>
             </div>
@@ -149,6 +173,20 @@ function renderCardsHTML(allTaskLists) {
     </div>`
   }
   return cardsHTML;
+}
+
+function resizeAllGridItems(){
+  var allItems = document.querySelectorAll(".card");
+  for (var i = 0; i < allItems.length; i++) {
+    resizeGridItem(allItems[i]);
+  }
+}
+
+function resizeGridItem(item){
+  rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
+  rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
+  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
+  item.style.gridRowEnd = "span "+rowSpan;
 }
 
 function validateMakeTaskList() {
@@ -167,44 +205,12 @@ function validateTaskInput() {
   }
 }
 
-
-
-
-
-
-
-
-
 function toggleCheck() {
-  if (event.target.classList.contains('checked')) {
-    event.target.classList.remove('checked');
+  if (event.target.parentElement.classList.contains('checked')) {
+    event.target.parentElement.classList.remove('checked');
     event.target.src = './assets/checkbox.svg';
   } else {
-    event.target.classList.add('checked')
+    event.target.parentElement.classList.add('checked')
     event.target.src = './assets/checkbox-active.svg';
   }
 }
-
-
-
-
-
-
-grid.addEventListener("resize", resizeAllGridItems);
-
-function resizeGridItem(item){
-  rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
-  rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
-  item.style.gridRowEnd = "span "+rowSpan;
-}
-
-function resizeAllGridItems(){
-  var allItems = document.querySelectorAll(".card");
-  for (var i = 0; i < allItems.length; i++) {
-    resizeGridItem(allItems[i]);
-  }
-}
-window.onload = setTimeout(function(){
-  resizeAllGridItems();
-}, 30);
