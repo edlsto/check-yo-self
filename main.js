@@ -5,13 +5,14 @@ var taskListContainer = document.querySelector('.task-list-inner');
 var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards');
-
+var clearBtn = document.querySelector('.clear-all');
 
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
 addTaskInput.addEventListener('keyup', validateTaskInput)
 addTaskButton.addEventListener('click', addTask);
 cardsSection.addEventListener("resize", resizeAllGridItems);
+clearBtn.addEventListener('click', resetTasks)
 taskListContainer.addEventListener('click', function(){
   removeTaskFromDrafts(event);
 });
@@ -26,6 +27,7 @@ window.onload = setTimeout(function(){
 }, 30);
 
 loadCards();
+
 
 function toggleUrgent(card) {
   if (card.classList.contains('urgent-card')) {
@@ -226,6 +228,9 @@ function validateMakeTaskList() {
     makeTaskList.removeAttribute('disabled')
   } else {
     makeTaskList.setAttribute('disabled', 'disabled');
+  }
+  if (tasks.length > 0) {
+    clearBtn.removeAttribute('disabled')
   }
 }
 
