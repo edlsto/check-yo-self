@@ -100,16 +100,47 @@ function filterByTask(taskList) {
   })
 }
 
+function checkForTaskMatch (taskList) {
+  var matched = false;
+  for (var i = 0; i < taskList.tasks.length; i++){
+    if (taskList.tasks[i].text.includes(searchInput.value)) {
+      matched = true;
+    }
+  }
+  return matched;
+}
+
+function filterByTitleAndTask(taskList) {
+  var matched = false;
+  for (var i = 0; i < taskList.tasks.length; i++){
+    if (taskList.tasks[i].text.toLowerCase().includes(searchInput.value.toLowerCase())) {
+      matched = true;
+    }
+    if (taskList.title.toLowerCase().includes(searchInput.value.toLowerCase())) {
+      matched = true;
+    }
+  }
+  return matched;
+  console.log(matched)
+}
+
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
-  var filteredTaskList = allTaskLists.filter(filterByTitle)
+  var filteredTasks = allTaskLists.filter(checkForTaskMatch);
+  var filteredTaskList = allTaskLists.filter(filterByTitle);
+  var filteredByTitleAndTask = allTaskLists.filter(filterByTitleAndTask);
   if (filterUrgentBtn.classList.contains('active')){
     filteredTaskList = filteredTaskList.filter(function(task) {
       return task.urgent
     })
   }
-
-  renderAndResizeCards(filteredTaskList)
+  if (searchInput.placeholder === 'Filter by task') {
+    renderAndResizeCards(filteredTasks)
+  } else if (searchInput.placeholder === 'Filter by title') {
+    renderAndResizeCards(filteredTaskList)
+  } else if (searchInput.placeholder === 'Search all' || searchInput.placeholder === 'Search' ) {
+    renderAndResizeCards(filteredByTitleAndTask)
+  }
 
 }
 
