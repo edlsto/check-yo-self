@@ -8,6 +8,25 @@ var cardsSection = document.querySelector('.cards');
 var clearBtn = document.querySelector('.clear-all');
 var searchInput = document.querySelector('.search-input');
 var filterUrgentBtn = document.querySelector('.urgency');
+var dropDownBtn = document.querySelector('.drop-down-btn');
+var dropDownContent = document.querySelector('.dropdown-content')
+
+dropDownContent.addEventListener('click', advancedFilter)
+
+function advancedFilter() {
+  if(event.target.classList.contains('filter-option')) {
+    console.log(event.target.parentElement)
+    searchInput.placeholder = event.target.innerText;
+    event.target.parentElement.classList.remove('show')
+  }
+
+}
+
+dropDownBtn.addEventListener('click', showMenu)
+
+function showMenu() {
+  dropDownContent.classList.toggle('show')
+}
 
 filterUrgentBtn.addEventListener('click', function() {
   toggleDisplayUrgentCards();
@@ -71,14 +90,19 @@ setTimeout(function(){
 
 loadCards();
 
-function filterBySearch(task) {
+function filterByTitle(task) {
   return task.title.toLowerCase().includes(searchInput.value.toLowerCase())
 }
 
+function filterByTask(taskList) {
+  var result = taskList.tasks.forEach(function(task) {
+    return task.text.toLowerCase().includes(searchInput.value.toLowerCase())
+  })
+}
 
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
-  var filteredTaskList = allTaskLists.filter(filterBySearch)
+  var filteredTaskList = allTaskLists.filter(filterByTitle)
   if (filterUrgentBtn.classList.contains('active')){
     filteredTaskList = filteredTaskList.filter(function(task) {
       return task.urgent
