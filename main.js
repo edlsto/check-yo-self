@@ -6,7 +6,9 @@ var makeTaskList = document.querySelector('.make-task-list');
 var taskTitleInput = document.querySelector('.dashboard-input');
 var cardsSection = document.querySelector('.cards');
 var clearBtn = document.querySelector('.clear-all');
+var searchInput = document.querySelector('.search-input')
 
+searchInput.addEventListener('keyup', filterCards)
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
 addTaskInput.addEventListener('keyup', validateTaskInput)
@@ -28,6 +30,18 @@ window.onload = setTimeout(function(){
 
 loadCards();
 
+function filterBySearch(task) {
+  return searchInput.value === task.title.slice(0, searchInput.value.length)
+}
+
+
+function filterCards() {
+  var allTaskLists = getAllSavedTasks();
+  var filteredTaskList = allTaskLists.filter(filterBySearch)
+  cardsSection.innerHTML = renderCardsHTML(filteredTaskList);
+  resizeAllGridItems();
+
+}
 
 function toggleUrgent(card, matchedTaskList) {
   if (card.classList.contains('urgent-card')) {
