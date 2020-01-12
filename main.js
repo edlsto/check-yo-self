@@ -36,7 +36,7 @@ cardsSection.addEventListener('keypress', function(){
 
 function editContent(e) {
   if ((e.target.classList.contains('card-title')
-  || e.target.classList.contains('task-item'))
+  || e.target.classList.contains('card-task-item'))
    && e.key === 'Enter') {
     var cardId = parseInt(e.target.closest('.card').id);
     var allTaskLists = getAllSavedTasks();
@@ -51,7 +51,7 @@ function makeEdits(e, matchedTaskList) {
   if (e.target.classList.contains('card-title')) {
     matchedTaskList.title = e.target.innerText;
     matchedTaskList.updateToDo();
-  } else if (e.target.classList.contains('task-item')) {
+  } else if (e.target.classList.contains('card-task-item')) {
     var taskId = parseInt(e.target.firstElementChild.id);
     var matchedTask = matchedTaskList.tasks.filter(function(task) {
       return taskId === task.id;
@@ -232,7 +232,7 @@ function makeTaskListHTML(taskList) {
   var taskListHTML = '';
   for (var i = 0; i < taskList.tasks.length; i++) {
     var task = taskList.tasks[i].text;
-    var html = `<li contenteditable="true" class="task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}">${task}</li>`
+    var html = `<li contenteditable="true" class="card-task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}"><p>${task}</p></li>`
     taskListHTML += html;
   }
   return taskListHTML;
