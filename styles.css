@@ -190,6 +190,14 @@ button[disabled] {
 
 /* CARD AREA STYLES */
 
+.card-task-item {
+  outline: 0;
+}
+
+.card-task-item p {
+  flex: 1 1 0;
+}
+
 .empty{
   display: flex;
   justify-content: center;
@@ -227,6 +235,7 @@ h3 {
 h2 {
   border-bottom: 1px solid #C7D3D8;
   padding: .5em;
+  outline: 0;
 }
 
 .urgent-card h2 {
