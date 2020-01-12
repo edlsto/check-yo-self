@@ -9,7 +9,11 @@ var clearBtn = document.querySelector('.clear-all');
 var searchInput = document.querySelector('.search-input');
 var filterUrgentBtn = document.querySelector('.urgency');
 
-filterUrgentBtn.addEventListener('click', toggleDisplayUrgentCards)
+filterUrgentBtn.addEventListener('click', function() {
+  toggleDisplayUrgentCards();
+  filterCards();
+})
+
 searchInput.addEventListener('keyup', filterCards)
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
 makeTaskList.addEventListener('click', createTaskList)
@@ -26,22 +30,27 @@ cardsSection.addEventListener('click', function(){
   makeUrgent(event);
 })
 
-window.onload = setTimeout(function(){
+setTimeout(function(){
   resizeAllGridItems();
 }, 30);
 
 loadCards();
 
 function filterBySearch(task) {
-  return searchInput.value.toLowerCase() === task.title.slice(0, searchInput.value.length).toLowerCase()
+  return task.title.toLowerCase().includes(searchInput.value.toLowerCase())
 }
 
 
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
   var filteredTaskList = allTaskLists.filter(filterBySearch)
-  cardsSection.innerHTML = renderCardsHTML(filteredTaskList);
-  resizeAllGridItems();
+  if (filterUrgentBtn.classList.contains('active')){
+    filteredTaskList = filteredTaskList.filter(function(task) {
+      return task.urgent
+    })
+  }
+
+  renderAndResizeCards(filteredTaskList)
 
 }
 
@@ -52,11 +61,9 @@ function toggleDisplayUrgentCards() {
     var urgentTaskList = allTaskLists.filter(function(task) {
       return task.urgent
     })
-    cardsSection.innerHTML = renderCardsHTML(urgentTaskList);
-    resizeAllGridItems();
+    renderAndResizeCards(urgentTaskList)
   } else {
-    cardsSection.innerHTML = renderCardsHTML(allTaskLists);
-    resizeAllGridItems();
+    renderAndResizeCards(allTaskLists)
   }
 }
 
@@ -217,8 +224,8 @@ function renderCardsHTML(allTaskLists) {
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     cardsHTML +=
     `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
+      <div class="content">
         <h2>${allTaskLists[i].title}</h2>
-        <div class="content">
           <ul>
             ${makeTaskListHTML(allTaskLists[i])}
           </ul>
@@ -238,6 +245,11 @@ function renderCardsHTML(allTaskLists) {
   return cardsHTML;
 }
 
+function renderAndResizeCards(allTaskLists) {
+  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  resizeAllGridItems();
+}
+
 function resizeAllGridItems(){
   var allItems = document.querySelectorAll(".card");
   for (var i = 0; i < allItems.length; i++) {
@@ -248,7 +260,7 @@ function resizeAllGridItems(){
 function resizeGridItem(item){
   rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
   rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+121.4219)/(rowHeight+rowGap));
+  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+64.4219)/(rowHeight+rowGap));
   item.style.gridRowEnd = "span "+rowSpan;
 }
 
