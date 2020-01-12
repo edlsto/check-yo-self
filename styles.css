@@ -142,6 +142,12 @@ label {
   margin-top: 2em;
 }
 
+.urgency.active {
+  background-color: #EF4A23;
+  color: #FFFFFF;
+  border: 2px solid #782616;
+}
+
 .add {
   display: inline;
   width: 3em;
