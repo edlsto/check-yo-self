@@ -24,5 +24,4 @@ Comp:
 Screenshots:  
 ![Final Screenshot](assets/check1.png)
 ![Final Screenshot](assets/check2.png)
-![Final Screenshot](assets/check4.png)
-![Final Screenshot](assets/check3.png)
+![Final Screenshot](assets/check4.png)![Final Screenshot](assets/check3.png)
