@@ -70,13 +70,10 @@ function addTask() {
 
 function addTaskInCard(e) {
   if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && /[^\s-]/.test(e.target.value)) {
-    var li = document.createElement("li");
-    li.setAttribute('contenteditable', 'true');
-    li.setAttribute('class', 'card-task-item');
     var task = new Task(e.target.value);
-    matchTaskList(event).tasks.push(task)
-    li.innerHTML = `<img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p>${e.target.value}</p>`
-    e.target.parentElement.firstElementChild.nextElementSibling.appendChild(li);
+    var matchedTaskList = matchTaskList(event)
+    matchedTaskList.tasks.push(task)
+    e.target.previousElementSibling.innerHTML +=`<li contenteditable="true" class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p>${e.target.value}</p></li>`
     e.target.value = '';
     resizeAllGridItems();
     matchedTaskList.updateToDo();
