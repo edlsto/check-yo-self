@@ -11,6 +11,7 @@ var filterUrgentBtn = document.querySelector('.urgency');
 var dropDownBtn = document.querySelector('.drop-down-btn');
 var dropDownContent = document.querySelector('.dropdown-content')
 
+
 dropDownContent.addEventListener('click', advancedFilter)
 
 function advancedFilter() {
@@ -51,7 +52,24 @@ cardsSection.addEventListener('click', function(){
 
 cardsSection.addEventListener('keypress', function(){
   editContent(event);
+  addTaskInCard(event);
 })
+
+function addTaskInCard(e) {
+  if (e.target.classList.contains('new-task-input') && e.key === 'Enter') {
+    let li = document.createElement("li");
+    li.setAttribute('contenteditable', 'true');
+    li.setAttribute('class', 'card-task-item');
+    var task = new Task(e.target.value);
+    var cardId = parseInt(event.target.parentElement.parentElement.id);
+    var matchedTaskList = getAllSavedTasks().filter(taskList => taskList.id === cardId)[0];
+    matchedTaskList.tasks.push(task)
+    li.innerHTML = `<img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p>${e.target.value}</p>`
+    e.target.parentElement.firstElementChild.nextElementSibling.appendChild(li);
+    resizeAllGridItems();
+    matchedTaskList.updateToDo();
+  }
+}
 
 function editContent(e) {
   if ((e.target.classList.contains('card-title')
@@ -334,6 +352,7 @@ function renderCardsHTML(allTaskLists) {
           <ul>
             ${makeTaskListHTML(allTaskLists[i])}
           </ul>
+          <input class="new-task-input" placeholder="Add new task"></input>
           </div>
           <div class="icon-row">
             <div class="card-urgent-icon">
