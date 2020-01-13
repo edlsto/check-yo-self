@@ -22,13 +22,22 @@ class ToDoList {
     localStorage.setItem('allTaskLists', JSON.stringify(allTaskLists));
   }
 
-  updateTask(taskId) {
-    for (var i = 0; i < this.tasks.length; i++) {
-      if (this.tasks[i].id === taskId) {
-        console.log(this.tasks[i].text)
-        this.tasks[i].text 
+  updateTask(id) {
+    var allTaskLists = JSON.parse(localStorage.getItem('allTaskLists')) || [];
+    var taskId = parseInt(id);
+    var matchedTask = this.tasks.filter(function(task) {
+      return taskId === task.id;
+    })[0]
+    for (var i = 0; i < allTaskLists.length; i++) {
+      if (this.id === allTaskLists[i].id){
+        for (var j = 0; j < allTaskLists[i].tasks.length; j++) {
+          if (allTaskLists[i].tasks[j].id === matchedTask.id) {
+            allTaskLists[i].tasks[j] = matchedTask;
+          }
+        }
       }
     }
+    localStorage.setItem('allTaskLists', JSON.stringify(allTaskLists));
   }
 
   updateToDo() {
@@ -41,7 +50,6 @@ class ToDoList {
       }
     }
     localStorage.setItem('allTaskLists', JSON.stringify(allTaskLists));
-      }
-
-
+  }
+  
 }
