@@ -19,6 +19,7 @@ cardsSection.addEventListener('click', function(){
   deleteCard(event);
   checkOffTask(event);
   makeUrgent(event);
+  renderUrgent(event);
 });
 cardsSection.addEventListener('keypress', function(){
   editContent(event);
@@ -56,6 +57,18 @@ function activateDeleteBtn(matchedTaskList) {
   } else {
     deleteBtn.classList.remove('active')
   };
+}
+
+function renderUrgent(e) {
+  if (e.target.parentElement.classList.contains('card-urgent-icon')) {
+    var allTaskLists = getAllSavedTasks();
+    var urgentTaskList = allTaskLists.filter(function(task) {
+      return task.urgent
+    })
+    if (filterUrgentBtn.classList.contains('active')) {
+      renderAndResizeCards(urgentTaskList)
+    }
+  }
 }
 
 function addTask() {
