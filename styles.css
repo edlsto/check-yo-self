@@ -343,3 +343,47 @@ li img {
   margin: 0 .7em;
   height: 2em;
 }
+
+
+@media screen and (max-width: 820px) {
+
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card {
+    margin-bottom: 1em;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-box {
+    margin-bottom: 1em;
+  }
+
+  h1 {
+    margin-bottom: .8em;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .new-task-input {
+    margin-bottom: 1em;
+  }
+
+}
