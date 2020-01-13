@@ -11,35 +11,19 @@ var filterUrgentBtn = document.querySelector('.urgency');
 var dropDownBtn = document.querySelector('.drop-down-btn');
 var dropDownContent = document.querySelector('.dropdown-content')
 
-
-dropDownContent.addEventListener('click', advancedFilter)
-
-function advancedFilter() {
-  if(event.target.classList.contains('filter-option')) {
-    console.log(event.target.parentElement)
-    searchInput.placeholder = event.target.innerText;
-    event.target.parentElement.classList.remove('show')
-  }
-
-}
+addTaskButton.addEventListener('click', addTask);
+addTaskInput.addEventListener('keyup', validateTaskInput)
+cardsSection.addEventListener("resize", resizeAllGridItems);
 
 dropDownBtn.addEventListener('click', showMenu)
-
-function showMenu() {
-  dropDownContent.classList.toggle('show')
-}
-
 filterUrgentBtn.addEventListener('click', function() {
   toggleDisplayUrgentCards();
   filterCards();
 })
+makeTaskList.addEventListener('click', createTaskList)
 
 searchInput.addEventListener('keyup', filterCards)
 taskTitleInput.addEventListener('keyup', validateMakeTaskList)
-makeTaskList.addEventListener('click', createTaskList)
-addTaskInput.addEventListener('keyup', validateTaskInput)
-addTaskButton.addEventListener('click', addTask);
-cardsSection.addEventListener("resize", resizeAllGridItems);
 clearBtn.addEventListener('click', resetTasks)
 taskListContainer.addEventListener('click', function(){
   removeTaskFromDrafts(event);
@@ -49,11 +33,17 @@ cardsSection.addEventListener('click', function(){
   checkOffTask(event);
   makeUrgent(event);
 })
-
 cardsSection.addEventListener('keypress', function(){
   editContent(event);
   addTaskInCard(event);
 })
+
+loadCards();
+
+
+function showMenu() {
+  dropDownContent.classList.toggle('show')
+}
 
 function addTaskInCard(e) {
   if (e.target.classList.contains('new-task-input') && e.key === 'Enter') {
@@ -98,15 +88,10 @@ function makeEdits(e, matchedTaskList) {
   }
 }
 
-function editTask() {
-
-}
-
 setTimeout(function(){
   resizeAllGridItems();
 }, 30);
 
-loadCards();
 
 function filterByTitle(task) {
   return task.title.toLowerCase().includes(searchInput.value.toLowerCase())
