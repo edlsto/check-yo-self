@@ -73,7 +73,7 @@ function addTaskInCard(e) {
     var task = new Task(e.target.value);
     var matchedTaskList = matchTaskList(event)
     matchedTaskList.tasks.push(task)
-    e.target.previousElementSibling.innerHTML +=`<li contenteditable="true" class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p>${e.target.value}</p></li>`
+    e.target.previousElementSibling.innerHTML +=`<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
     e.target.value = '';
     resizeAllGridItems();
     matchedTaskList.updateToDo();
@@ -114,7 +114,7 @@ function checkForTaskMatch (taskList) {
 }
 
 function checkNoUrgentItems() {
-  if (cardsSection.innerHTML === '') {
+  if (cardsSection.innerHTML === '' || cardsSection.firstElementChild.innerText === 'No search results') {
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = `<h3>No urgent to-dos</h3>`;
   } else {
