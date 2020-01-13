@@ -14,3 +14,8 @@ Challenges:
 Wins:
 
 # Screenshots of comp and our app
+
+![Comp Screenshot](assets/bab-comp.png)
+![Final Screenshot](assets/check1.png)
+![Final Screenshot](assets/check2.png)
+![Final Screenshot](assets/check3.png)
