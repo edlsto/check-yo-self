@@ -147,12 +147,10 @@ function createTaskList() {
 
 function deleteCard(e) {
   if (e.target.parentElement.classList.contains('card-delete-icon') && e.target.parentElement.classList.contains('active')) {
-    var selectedCard = e.target.parentElement.parentElement.parentElement;
-    selectedCard.remove()
+    e.target.closest('.card').remove()
     var allTaskLists = getAllSavedTasks();
     var matchedTaskList = matchTaskList(event)
     matchedTaskList.deleteFromStorage()
-    allTaskLists = getAllSavedTasks();
     checkForEmpty();
   }
 }
@@ -193,6 +191,12 @@ function filterCards() {
     renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitle)))
   } else if (searchInput.placeholder === 'Search all') {
     renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitleAndTask)))
+  }
+  if (cardsSection.innerHTML === '') {
+    cardsSection.classList.add('empty');
+    cardsSection.innerHTML = `<h3>No search results</h3>`;
+  } else {
+    cardsSection.classList.remove('empty');
   }
 }
 
