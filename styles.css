@@ -329,3 +329,9 @@ li img {
 .dashboard li {
   color: #fff;
 }
+
+.new-task-input {
+  width: 93%;
+  margin: 0 .7em;
+  height: 2em;
+}
