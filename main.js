@@ -173,7 +173,7 @@ function deleteCard(e) {
 
 function editContent(e) {
   if ((e.target.classList.contains('card-title')
-  || e.target.classList.contains('card-task-item'))
+  || e.target.classList.contains('card-task-item-text'))
    && e.key === 'Enter') {
     var matchedTaskList = matchTaskList(event)
     makeEdits(e, matchedTaskList)
@@ -232,7 +232,7 @@ function loadCards() {
 }
 
 function matchTask(e, matchedTaskList) {
-  var taskId = parseInt(e.target.firstElementChild.id);
+  var taskId = parseInt(e.target.parentElement.firstElementChild.id);
   return matchedTaskList.tasks.filter(function(task) {
     return taskId === task.id;
   })[0]
@@ -242,10 +242,10 @@ function makeEdits(e, matchedTaskList) {
   if (e.target.classList.contains('card-title')) {
     matchedTaskList.title = e.target.innerText;
     matchedTaskList.updateToDo();
-  } else if (e.target.classList.contains('card-task-item')) {
+  } else if (e.target.classList.contains('card-task-item-text')) {
     var matchedTask = matchTask(e, matchedTaskList);
     matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].text = e.target.innerText;
-    matchedTaskList.updateTask(parseInt(e.target.firstElementChild.id));
+    matchedTaskList.updateTask(parseInt(e.target.parentElement.firstElementChild.id));
   }
 }
 
@@ -253,7 +253,7 @@ function makeTaskListHTML(taskList) {
   var taskListHTML = '';
   for (var i = 0; i < taskList.tasks.length; i++) {
     var task = taskList.tasks[i].text;
-    var html = `<li contenteditable="true" class="card-task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}"><p>${task}</p></li>`
+    var html = `<li class="card-task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}"><p contenteditable="true" class="card-task-item-text">${task}</p></li>`
     taskListHTML += html;
   }
   return taskListHTML;
