@@ -13,36 +13,34 @@ var tasks = [];
 var taskTitleInput = document.querySelector('.dashboard-input');
 var filterOptions = document.querySelectorAll('.filter-option');
 
-dropDownContent.addEventListener('click', function() {
-  advancedFilter();
-  filterCards();
-})
-
-
 addTaskButton.addEventListener('click', addTask);
 addTaskInput.addEventListener('keyup', validateTaskInput)
 cardsSection.addEventListener('click', function(){
   deleteCard(event);
   checkOffTask(event);
   makeUrgent(event);
-})
+});
 cardsSection.addEventListener('keypress', function(){
   editContent(event);
   addTaskInCard(event);
-})
+});
 clearBtn.addEventListener('click', resetTasks)
 dropDownBtn.addEventListener('click', showMenu)
+dropDownContent.addEventListener('click', function() {
+  advancedFilter();
+  filterCards();
+});
 filterUrgentBtn.addEventListener('click', function() {
   toggleDisplayUrgentCards();
   filterCards();
   checkNoUrgentItems()
-})
-makeTaskList.addEventListener('click', createTaskList)
+});
+makeTaskList.addEventListener('click', createTaskList);
 taskListContainer.addEventListener('click', function(){
   removeTaskFromDrafts(event);
 });
-searchInput.addEventListener('keyup', filterCards)
-taskTitleInput.addEventListener('keyup', validateMakeTaskList)
+searchInput.addEventListener('keyup', filterCards);
+taskTitleInput.addEventListener('keyup', validateMakeTaskList);
 window.addEventListener("resize", resizeAllGridItems);
 
 loadCards();
@@ -71,39 +69,33 @@ function addTask() {
 }
 
 function addTaskInCard(e) {
-  var regex = /[^\s-]/
-  if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && regex.test(e.target.value)) {
+  if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && /[^\s-]/.test(e.target.value)) {
     var li = document.createElement("li");
     li.setAttribute('contenteditable', 'true');
     li.setAttribute('class', 'card-task-item');
     var task = new Task(e.target.value);
-    var matchedTaskList = matchTaskList(event);
-    matchedTaskList.tasks.push(task)
+    matchTaskList(event).tasks.push(task)
     li.innerHTML = `<img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p>${e.target.value}</p>`
     e.target.parentElement.firstElementChild.nextElementSibling.appendChild(li);
     e.target.value = '';
     resizeAllGridItems();
     matchedTaskList.updateToDo();
-  }
+  };
 }
 
 function advancedFilter() {
   if(event.target.classList.contains('filter-option')) {
     filterOptions.forEach(function(option){
-      option.classList.remove('active-search')
-    })
-    event.target.classList.add('active-search')
+      option.classList.remove('active-search');
+    });
+    event.target.classList.add('active-search');
     searchInput.placeholder = event.target.innerText;
-    event.target.parentElement.classList.remove('show')
-  }
-
+    event.target.parentElement.classList.remove('show');
+  };
 }
 
 function checkForEmpty() {
   var allTaskLists = getAllSavedTasks();
-  var urgentTaskList = allTaskLists.filter(function(task) {
-    return task.urgent
-  });
   if (allTaskLists.length === 0){
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = `<h3>Create a to-do!</h3>`;
@@ -161,11 +153,8 @@ function deleteCard(e) {
     var selectedCard = e.target.parentElement.parentElement.parentElement;
     selectedCard.remove()
     var allTaskLists = getAllSavedTasks();
-    allTaskLists.forEach(function(taskList, i){
-      if (taskList.id === parseInt(selectedCard.id)) {
-        taskList.deleteFromStorage();
-      }
-    })
+    var matchedTaskList = matchTaskList(event)
+    matchedTaskList.deleteFromStorage()
     allTaskLists = getAllSavedTasks();
     checkForEmpty();
   }
