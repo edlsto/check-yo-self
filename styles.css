@@ -17,7 +17,7 @@ body {
   grid-template-areas:
     "nav nav"
     "dashboard cards";
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 23em 1fr;
   grid-template-rows: 75px 1fr;
   font-family: 'Open Sans', sans-serif;
 }
