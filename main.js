@@ -71,7 +71,8 @@ function addTask() {
 }
 
 function addTaskInCard(e) {
-  if (e.target.classList.contains('new-task-input') && e.key === 'Enter') {
+  var regex = /[^\s-]/
+  if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && regex.test(e.target.value)) {
     var li = document.createElement("li");
     li.setAttribute('contenteditable', 'true');
     li.setAttribute('class', 'card-task-item');
@@ -339,8 +340,6 @@ function resizeAllGridItems(){
   for (var i = 0; i < allItems.length; i++) {
     resizeGridItem(allItems[i]);
   }
-  console.log('hi')
-
 }
 
 function resizeGridItem(item){
