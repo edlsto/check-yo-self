@@ -226,8 +226,16 @@ button[disabled] {
 
 /* CARD AREA STYLES */
 
-.card-task-item {
-  outline: 0;
+
+
+.card-task-item:hover,
+.card-title:hover {
+  cursor: pointer;
+}
+
+.card-task-item:focus,
+.card-title:focus {
+  cursor: text;
 }
 
 .card-task-item p {
@@ -271,7 +279,6 @@ h3 {
 h2 {
   border-bottom: 1px solid #C7D3D8;
   padding: .5em;
-  outline: 0;
 }
 
 .urgent-card h2 {
