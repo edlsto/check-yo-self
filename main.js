@@ -127,6 +127,7 @@ function checkForTaskMatch (taskList) {
 }
 
 function checkNoUrgentItems() {
+  console.log(cardsSection)
   if (cardsSection.innerHTML === '' || cardsSection.firstElementChild.innerText === 'No search results') {
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = `<h3>No urgent to-dos</h3>`;
@@ -291,38 +292,39 @@ function removeTaskFromDraftModeStorage(e) {
 }
 
 function renderCardsHTML(allTaskLists) {
+  cardsSection.innerHTML = '';
   for (var i = allTaskLists.length - 1; i >= 0; i--){
-    var clone = document.importNode(document.querySelector('#task-card').content, true);
+    var cardClone = document.importNode(document.querySelector('#task-card').content, true);
     if (allTaskLists[i].urgent) {
-      clone.querySelector('.card').classList.add('urgent-card')
+      cardClone.querySelector('.card').classList.add('urgent-card')
     }
     if (validateDelete(allTaskLists[i])) {
-      clone.querySelector('.card-delete-icon').classList.add('active')
+      cardClone.querySelector('.card-delete-icon').classList.add('active')
     }
-    clone.querySelector('.card').id = allTaskLists[i].id
-    clone.querySelector('.card-title').textContent = allTaskLists[i].title;
-    makeTasksHTML(allTaskLists, i, clone)
-    cardsSection.appendChild(clone);
+    cardClone.querySelector('.card').id = allTaskLists[i].id
+    cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+    makeTasksHTML(allTaskLists, i, cardClone)
+    cardsSection.appendChild(cardClone);
   }
 }
 
 function makeTasksHTML(allTaskLists, i, clone) {
   allTaskLists[i].tasks.forEach(function(task, i){
-    var clone2 = document.importNode(document.querySelector('#task-item').content, true);
-    clone2.querySelector('p').textContent = task.text;
+    var taskClone = document.importNode(document.querySelector('#task-item').content, true);
+    taskClone.querySelector('p').textContent = task.text;
     if (task.done === false) {
-      clone2.querySelector('img').setAttribute('src', './assets/checkbox.svg')
+      taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
     } else {
-      clone2.querySelector('li').classList.add('checked');
-      clone2.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
+      taskClone.querySelector('li').classList.add('checked');
+      taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
     }
-    clone2.querySelector('img').id = task.id;
-    clone.querySelector('ul').appendChild(clone2);
+    taskClone.querySelector('img').id = task.id;
+    clone.querySelector('ul').appendChild(taskClone);
   })
 }
 
 function renderAndResizeCards(allTaskLists) {
-  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  renderCardsHTML(allTaskLists);
   resizeAllGridItems();
 }
 
@@ -372,6 +374,7 @@ function toggleDisplayUrgentCards() {
     cardsSection.classList.remove('empty');
     renderAndResizeCards(allTaskLists)
   }
+
 }
 
 function toggleUrgent(card, matchedTaskList) {
