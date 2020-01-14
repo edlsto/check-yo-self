@@ -15,30 +15,30 @@ var taskTitleInput = document.querySelector('.dashboard-input');
 
 addTaskButton.addEventListener('click', addTaskDraftMode);
 addTaskInput.addEventListener('keyup', validateAddTaskBtn)
-cardsSection.addEventListener('click', function(){
-  deleteCard(event);
-  checkOffTask(event);
-  makeUrgent(event);
-  renderUrgent(event);
+cardsSection.addEventListener('click', function(e){
+  deleteCard(e);
+  checkOffTask(e);
+  makeUrgent(e);
+  renderUrgent(e);
 });
-cardsSection.addEventListener('keypress', function(){
-  editContent(event);
-  addTaskInCard(event);
+cardsSection.addEventListener('keypress', function(e){
+  editContent(e);
+  addTaskInCard(e);
 });
 clearBtn.addEventListener('click', resetTasks)
 dropDownBtn.addEventListener('click', showMenu)
-dropDownContent.addEventListener('click', function() {
-  changeSearchType(event);
+dropDownContent.addEventListener('click', function(e) {
+  changeSearchType(e);
   filterCards();
 });
-filterUrgentBtn.addEventListener('click', function() {
-  toggleUrgentCardsDOM(event);
+filterUrgentBtn.addEventListener('click', function(e) {
+  toggleUrgentCardsDOM(e);
   filterCards();
 });
 makeTaskList.addEventListener('click', createTaskList);
 searchInput.addEventListener('keyup', filterCards);
-taskListContainer.addEventListener('click', function(){
-  removeTaskFromDrafts(event);
+taskListContainer.addEventListener('click', function(e){
+  removeTaskFromDrafts(e);
 });
 taskTitleInput.addEventListener('keyup', validateMakeTaskListBtn);
 window.addEventListener("resize", resizeAllGridItems);
