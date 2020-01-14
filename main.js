@@ -291,18 +291,23 @@ function removeTaskFromDraftModeStorage(e) {
   });
 }
 
+function hydrateClone(cardClone, allTaskLists, i) {
+  if (allTaskLists[i].urgent) {
+    cardClone.querySelector('.card').classList.add('urgent-card')
+  }
+  if (validateDelete(allTaskLists[i])) {
+    cardClone.querySelector('.card-delete-icon').classList.add('active')
+  }
+  cardClone.querySelector('.card').id = allTaskLists[i].id
+  cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+}
+
+
 function renderCardsHTML(allTaskLists) {
   cardsSection.innerHTML = '';
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     var cardClone = document.importNode(document.querySelector('#task-card').content, true);
-    if (allTaskLists[i].urgent) {
-      cardClone.querySelector('.card').classList.add('urgent-card')
-    }
-    if (validateDelete(allTaskLists[i])) {
-      cardClone.querySelector('.card-delete-icon').classList.add('active')
-    }
-    cardClone.querySelector('.card').id = allTaskLists[i].id
-    cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+    hydrateClone(cardClone, allTaskLists, i)
     makeTasksHTML(allTaskLists, i, cardClone)
     cardsSection.appendChild(cardClone);
   }
@@ -311,16 +316,20 @@ function renderCardsHTML(allTaskLists) {
 function makeTasksHTML(allTaskLists, i, clone) {
   allTaskLists[i].tasks.forEach(function(task, i){
     var taskClone = document.importNode(document.querySelector('#task-item').content, true);
-    taskClone.querySelector('p').textContent = task.text;
-    if (task.done === false) {
-      taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
-    } else {
-      taskClone.querySelector('li').classList.add('checked');
-      taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
-    }
-    taskClone.querySelector('img').id = task.id;
+    hydrateTask(taskClone, task)
     clone.querySelector('ul').appendChild(taskClone);
   })
+}
+
+function hydrateTask(taskClone, task) {
+  taskClone.querySelector('p').textContent = task.text;
+  if (task.done === false) {
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
+  } else {
+    taskClone.querySelector('li').classList.add('checked');
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
+  }
+  taskClone.querySelector('img').id = task.id;
 }
 
 function renderAndResizeCards(allTaskLists) {
