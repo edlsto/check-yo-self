@@ -49,8 +49,8 @@ setTimeout(function(){
   resizeAllGridItems();
 }, 30);
 
-function activateDeleteBtn(matchedTaskList, event) {
-  var deleteBtn = event.target.closest('.content').nextElementSibling.firstElementChild.nextElementSibling;
+function activateDeleteBtn(matchedTaskList, e) {
+  var deleteBtn = e.target.closest('.content').nextElementSibling.firstElementChild.nextElementSibling;
   if (validateDelete(matchedTaskList)) {
     deleteBtn.classList.add('active')
   } else {
@@ -80,27 +80,27 @@ function addTaskInCard(e) {
   };
 }
 
-function changeSearchType(event) {
-  if(event.target.classList.contains('filter-option')) {
+function changeSearchType(e) {
+  if(e.target.classList.contains('filter-option')) {
     filterOptions.forEach(function(option){
       option.classList.remove('active-search');
     });
-    event.target.classList.add('active-search');
+    e.target.classList.add('active-search');
     searchInput.placeholder = event.target.innerText;
-    event.target.parentElement.classList.remove('show');
+    e.target.parentElement.classList.remove('show');
   };
 }
 
-function checkOffTask(event) {
-  if (event.target.classList.contains('checkbox')) {
-    toggleCheckDOM(event);
-    var matchedTaskList = matchTaskList(event)
+function checkOffTask(e) {
+  if (e.target.classList.contains('checkbox')) {
+    toggleCheckDOM(e);
+    var matchedTaskList = matchTaskList(e)
     var matchedTask = matchedTaskList.tasks.filter(function(task) {
-      return parseInt(event.target.id) === task.id;
+      return parseInt(e.target.id) === task.id;
     })[0]
     matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done = !matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done
-    matchedTaskList.updateTask(event.target.id);
-    activateDeleteBtn(matchedTaskList, event);
+    matchedTaskList.updateTask(e.target.id);
+    activateDeleteBtn(matchedTaskList, e);
   }
 }
 
@@ -132,7 +132,7 @@ function deleteCard(e) {
   if (e.target.parentElement.classList.contains('card-delete-icon') && e.target.parentElement.classList.contains('active')) {
     e.target.closest('.card').remove()
     var allTaskLists = getAllSavedTasks();
-    var matchedTaskList = matchTaskList(event)
+    var matchedTaskList = matchTaskList(e)
     matchedTaskList.deleteFromStorage();
     allTaskLists.splice(allTaskLists.indexOf(matchedTaskList), 1);
     renderEmptyMsg(allTaskLists);
@@ -247,8 +247,8 @@ function makeUrgent(e) {
   }
 }
 
-function matchTaskList(event) {
-  var cardId = parseInt(event.target.closest('.card').id);
+function matchTaskList(e) {
+  var cardId = parseInt(e.target.closest('.card').id);
   return getAllSavedTasks().filter(taskList => taskList.id === cardId)[0];
 }
 
@@ -344,13 +344,13 @@ function showMenu() {
   dropDownContent.classList.toggle('show')
 }
 
-function toggleCheckDOM(event) {
-  if (event.target.parentElement.classList.contains('checked')) {
-    event.target.parentElement.classList.remove('checked');
-    event.target.src = './assets/checkbox.svg';
+function toggleCheckDOM(e) {
+  if (e.target.parentElement.classList.contains('checked')) {
+    e.target.parentElement.classList.remove('checked');
+    e.target.src = './assets/checkbox.svg';
   } else {
-    event.target.parentElement.classList.add('checked')
-    event.target.src = './assets/checkbox-active.svg';
+    e.target.parentElement.classList.add('checked')
+    e.target.src = './assets/checkbox-active.svg';
   }
 }
 
