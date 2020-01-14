@@ -405,17 +405,6 @@ function validateDelete(taskList) {
   return validated;
 }
 
-function validateMakeTaskListBtn() {
-  if (tasks.length > 0 && taskTitleInput.value !== '') {
-    makeTaskList.removeAttribute('disabled')
-  } else {
-    makeTaskList.setAttribute('disabled', 'disabled');
-  }
-  if (tasks.length > 0 || taskTitleInput.value !== '') {
-    clearBtn.removeAttribute('disabled')
-  }
-}
-
 function validateAddTaskBtn() {
   if (addTaskInput.value !== '') {
     addTaskButton.removeAttribute('disabled');
@@ -429,5 +418,16 @@ function validateFilterUrgentBtn(allTaskLists) {
     filterUrgentBtn.removeAttribute('disabled');
   } else {
     filterUrgentBtn.setAttribute('disabled', 'disabled');
+  }
+}
+
+function validateMakeTaskListBtn() {
+  if (tasks.length > 0 && taskTitleInput.value !== '') {
+    makeTaskList.removeAttribute('disabled')
+  } else {
+    makeTaskList.setAttribute('disabled', 'disabled');
+  }
+  if (tasks.length > 0 || taskTitleInput.value !== '') {
+    clearBtn.removeAttribute('disabled')
   }
 }
