@@ -71,12 +71,11 @@ function addTaskDraftMode() {
 function addTaskInCard(e) {
   if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && /[^\s-]/.test(e.target.value)) {
     var task = new Task(e.target.value);
-    var matchedTaskList = matchTaskList(event)
-    matchedTaskList.tasks.push(task)
+    matchTaskList(event).tasks.push(task)
     e.target.previousElementSibling.innerHTML +=`<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
     e.target.value = '';
     resizeAllGridItems();
-    matchedTaskList.updateToDo();
+    matchTaskList(event).updateToDo();
   };
 }
 
@@ -89,16 +88,6 @@ function changeSearchType() {
     searchInput.placeholder = event.target.innerText;
     event.target.parentElement.classList.remove('show');
   };
-}
-
-function checkForTaskMatch (taskList) {
-  var matched = false;
-  for (var i = 0; i < taskList.tasks.length; i++){
-    if (taskList.tasks[i].text.toLowerCase().includes(searchInput.value.toLowerCase())) {
-      matched = true;
-    }
-  }
-  return matched;
 }
 
 function checkOffTask(event) {
@@ -154,34 +143,30 @@ function editContent(e) {
   if ((e.target.classList.contains('card-title')
   || e.target.classList.contains('card-task-item-text'))
    && e.key === 'Enter') {
-    var matchedTaskList = matchTaskList(event)
-    makeEdits(e, matchedTaskList)
+    makeEdits(e, matchTaskList(event))
     e.preventDefault();
     e.target.blur();
   }
 }
 
+function filterByTask(taskList) {
+  return taskList.tasks.some(function(task) {
+    return task.text.toLowerCase().includes(searchInput.value.toLowerCase());
+  });
+}
+
 function filterByTitle(task) {
-  return task.title.toLowerCase().includes(searchInput.value.toLowerCase())
+  return task.title.toLowerCase().includes(searchInput.value.toLowerCase());
 }
 
 function filterByTitleAndTask(taskList) {
-  var matched = false;
-  taskList.tasks.forEach(function(task) {
-    if (task.text.toLowerCase().includes(searchInput.value.toLowerCase())) {
-      matched = true;
-    };
-    if (taskList.title.toLowerCase().includes(searchInput.value.toLowerCase())) {
-      matched = true;
-    };
-  });
-  return matched;
+    return filterByTask(taskList) || filterByTitle(taskList)
 }
 
 function filterCards() {
   var allTaskLists = getAllSavedTasks();
   if (searchInput.placeholder === 'Filter by task') {
-    renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(checkForTaskMatch)))
+    renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTask)))
   } else if (searchInput.placeholder === 'Filter by title') {
     renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitle)))
   } else if (searchInput.placeholder === 'Search all') {
@@ -279,13 +264,13 @@ function removeTaskFromDrafts(e) {
     removeTaskFromDraftModeData(e);
     e.target.parentNode.remove();
   };
-  validateMakeTaskListBtn()
+  validateMakeTaskListBtn();
 }
 
 function removeTaskFromDraftModeData(e) {
   tasks.forEach(function(task, i){
     if (e.target.parentElement.innerText === task.text) {
-      tasks.splice(i, 1)
+      tasks.splice(i, 1);
     };
   });
 }
@@ -299,10 +284,10 @@ function renderCardsHTML(allTaskLists) {
   cardsSection.innerHTML = '';
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     var cardClone = document.importNode(document.querySelector('#task-card').content, true);
-    hydrateCardClone(cardClone, allTaskLists, i)
-    renderTasksHTML(allTaskLists, i, cardClone)
+    hydrateCardClone(cardClone, allTaskLists, i);
+    renderTasksHTML(allTaskLists, i, cardClone);
     cardsSection.appendChild(cardClone);
-  }
+  };
 }
 
 function renderEmptyMsg(allTaskLists) {
@@ -318,7 +303,7 @@ function renderEmptyMsg(allTaskLists) {
 function renderTasksHTML(allTaskLists, i, clone) {
   allTaskLists[i].tasks.forEach(function(task, i){
     var taskClone = document.importNode(document.querySelector('#task-item').content, true);
-    hydrateTask(taskClone, task)
+    hydrateTask(taskClone, task);
     clone.querySelector('ul').appendChild(taskClone);
   });
 }
@@ -327,7 +312,7 @@ function renderUrgent(e) {
   if (e.target.parentElement.classList.contains('card-urgent-icon') && filterUrgentBtn.classList.contains('active')) {
     var allTaskLists = getAllSavedTasks();
     var urgentTaskList = allTaskLists.filter(function(task) {
-      return task.urgent
+      return task.urgent;
     });
     renderAndResizeCards(urgentTaskList);
     renderEmptyMsg(allTaskLists);
@@ -350,8 +335,8 @@ function resizeAllGridItems(){
 function resizeGridItem(item){
   rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
   rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height+rowGap+70)/(rowHeight+rowGap));
-  item.style.gridRowEnd = "span "+rowSpan;
+  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height + rowGap + 70)/(rowHeight + rowGap));
+  item.style.gridRowEnd = "span " + rowSpan;
 }
 
 function showMenu() {
