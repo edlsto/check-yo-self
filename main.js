@@ -28,7 +28,7 @@ cardsSection.addEventListener('keypress', function(){
 clearBtn.addEventListener('click', resetTasks)
 dropDownBtn.addEventListener('click', showMenu)
 dropDownContent.addEventListener('click', function() {
-  changeSearchType();
+  changeSearchType(event);
   filterCards();
 });
 filterUrgentBtn.addEventListener('click', function() {
@@ -49,7 +49,7 @@ setTimeout(function(){
   resizeAllGridItems();
 }, 30);
 
-function activateDeleteBtn(matchedTaskList) {
+function activateDeleteBtn(matchedTaskList, event) {
   var deleteBtn = event.target.closest('.content').nextElementSibling.firstElementChild.nextElementSibling;
   if (validateDelete(matchedTaskList)) {
     deleteBtn.classList.add('active')
@@ -71,7 +71,7 @@ function addTaskDraftMode() {
 function addTaskInCard(e) {
   if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && /[^\s-]/.test(e.target.value)) {
     var task = new Task(e.target.value);
-    var matchedTaskList = matchTaskList(event)
+    var matchedTaskList = matchTaskList(e)
     matchedTaskList.tasks.push(task)
     e.target.previousElementSibling.innerHTML +=`<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
     e.target.value = '';
@@ -80,7 +80,7 @@ function addTaskInCard(e) {
   };
 }
 
-function changeSearchType() {
+function changeSearchType(event) {
   if(event.target.classList.contains('filter-option')) {
     filterOptions.forEach(function(option){
       option.classList.remove('active-search');
@@ -93,14 +93,14 @@ function changeSearchType() {
 
 function checkOffTask(event) {
   if (event.target.classList.contains('checkbox')) {
-    toggleCheckDOM();
+    toggleCheckDOM(event);
     var matchedTaskList = matchTaskList(event)
     var matchedTask = matchedTaskList.tasks.filter(function(task) {
       return parseInt(event.target.id) === task.id;
     })[0]
     matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done = !matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done
     matchedTaskList.updateTask(event.target.id);
-    activateDeleteBtn(matchedTaskList);
+    activateDeleteBtn(matchedTaskList, event);
   }
 }
 
@@ -144,7 +144,7 @@ function editContent(e) {
   if ((e.target.classList.contains('card-title')
   || e.target.classList.contains('card-task-item-text'))
    && e.key === 'Enter') {
-    makeEdits(e, matchTaskList(event))
+    makeEdits(e, matchTaskList(e))
     e.preventDefault();
     e.target.blur();
   }
@@ -241,7 +241,7 @@ function makeEdits(e, matchedTaskList) {
 function makeUrgent(e) {
   if (e.target.parentElement.classList.contains('card-urgent-icon')) {
     var card = e.target.parentElement.parentElement.parentElement
-    var matchedTaskList = matchTaskList(event)
+    var matchedTaskList = matchTaskList(e)
     toggleUrgentData(card, matchedTaskList);
     matchedTaskList.updateToDo();
   }
@@ -344,7 +344,7 @@ function showMenu() {
   dropDownContent.classList.toggle('show')
 }
 
-function toggleCheckDOM() {
+function toggleCheckDOM(event) {
   if (event.target.parentElement.classList.contains('checked')) {
     event.target.parentElement.classList.remove('checked');
     event.target.src = './assets/checkbox.svg';
