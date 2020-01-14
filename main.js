@@ -86,7 +86,7 @@ function changeSearchType(e) {
       option.classList.remove('active-search');
     });
     e.target.classList.add('active-search');
-    searchInput.placeholder = event.target.innerText;
+    searchInput.placeholder = e.target.innerText;
     e.target.parentElement.classList.remove('show');
   };
 }
