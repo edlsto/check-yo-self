@@ -50,7 +50,7 @@ setTimeout(function(){
 }, 30);
 
 function activateDeleteBtn(matchedTaskList, e) {
-  var deleteBtn = e.target.closest('.content').nextElementSibling.firstElementChild.nextElementSibling;
+  var deleteBtn = e.target.closest('.card').querySelector('.card-delete-icon');
   if (validateDelete(matchedTaskList)) {
     deleteBtn.classList.add('active')
   } else {
