@@ -3,7 +3,8 @@ var addTaskInput = document.querySelector('.task-item-input');
 var cardsSection = document.querySelector('.cards');
 var clearBtn = document.querySelector('.clear-all');
 var dropDownBtn = document.querySelector('.drop-down-btn');
-var dropDownContent = document.querySelector('.dropdown-content')
+var dropDownContent = document.querySelector('.dropdown-content');
+var filterOptions = document.querySelectorAll('.filter-option');
 var filterUrgentBtn = document.querySelector('.urgency');
 var makeTaskList = document.querySelector('.make-task-list');
 var newTaskInput = document.querySelector('.new-task-input')
@@ -11,10 +12,9 @@ var searchInput = document.querySelector('.search-input');
 var taskListContainer = document.querySelector('.task-list-inner');
 var tasks = [];
 var taskTitleInput = document.querySelector('.dashboard-input');
-var filterOptions = document.querySelectorAll('.filter-option');
 
-addTaskButton.addEventListener('click', addTask);
-addTaskInput.addEventListener('keyup', validateTaskInput)
+addTaskButton.addEventListener('click', addTaskDraftMode);
+addTaskInput.addEventListener('keyup', validateAddTaskBtn)
 cardsSection.addEventListener('click', function(){
   deleteCard(event);
   checkOffTask(event);
@@ -28,20 +28,19 @@ cardsSection.addEventListener('keypress', function(){
 clearBtn.addEventListener('click', resetTasks)
 dropDownBtn.addEventListener('click', showMenu)
 dropDownContent.addEventListener('click', function() {
-  advancedFilter();
+  changeSearchType();
   filterCards();
 });
 filterUrgentBtn.addEventListener('click', function() {
-  toggleDisplayUrgentCards();
+  toggleUrgentCardsDOM(event);
   filterCards();
-  checkNoUrgentItems()
 });
 makeTaskList.addEventListener('click', createTaskList);
+searchInput.addEventListener('keyup', filterCards);
 taskListContainer.addEventListener('click', function(){
   removeTaskFromDrafts(event);
 });
-searchInput.addEventListener('keyup', filterCards);
-taskTitleInput.addEventListener('keyup', validateMakeTaskList);
+taskTitleInput.addEventListener('keyup', validateMakeTaskListBtn);
 window.addEventListener("resize", resizeAllGridItems);
 
 loadCards();
@@ -59,26 +58,14 @@ function activateDeleteBtn(matchedTaskList) {
   };
 }
 
-function renderUrgent(e) {
-  if (e.target.parentElement.classList.contains('card-urgent-icon')) {
-    var allTaskLists = getAllSavedTasks();
-    var urgentTaskList = allTaskLists.filter(function(task) {
-      return task.urgent
-    })
-    if (filterUrgentBtn.classList.contains('active')) {
-      renderAndResizeCards(urgentTaskList)
-    }
-  }
-}
-
-function addTask() {
+function addTaskDraftMode() {
   var task = new Task(addTaskInput.value);
   tasks.push(task);
   taskListContainer.innerHTML +=
   `<li><img src="./assets/delete.svg" class="delete-task">${task.text}</li>`
   addTaskInput.value = '';
   addTaskButton.setAttribute('disabled', 'disabled');
-  validateMakeTaskList();
+  validateMakeTaskListBtn();
 }
 
 function addTaskInCard(e) {
@@ -93,7 +80,7 @@ function addTaskInCard(e) {
   };
 }
 
-function advancedFilter() {
+function changeSearchType() {
   if(event.target.classList.contains('filter-option')) {
     filterOptions.forEach(function(option){
       option.classList.remove('active-search');
@@ -102,18 +89,6 @@ function advancedFilter() {
     searchInput.placeholder = event.target.innerText;
     event.target.parentElement.classList.remove('show');
   };
-}
-
-function checkForEmpty() {
-  var allTaskLists = getAllSavedTasks();
-  if (allTaskLists.length === 0){
-    cardsSection.classList.add('empty');
-    cardsSection.innerHTML = `<h3>Create a to-do!</h3>`;
-    filterUrgentBtn.setAttribute('disabled', 'disabled');
-  } else {
-    cardsSection.classList.remove('empty');
-    filterUrgentBtn.removeAttribute('disabled');
-  }
 }
 
 function checkForTaskMatch (taskList) {
@@ -126,19 +101,9 @@ function checkForTaskMatch (taskList) {
   return matched;
 }
 
-function checkNoUrgentItems() {
-  console.log(cardsSection)
-  if (cardsSection.innerHTML === '' || cardsSection.firstElementChild.innerText === 'No search results') {
-    cardsSection.classList.add('empty');
-    cardsSection.innerHTML = `<h3>No urgent to-dos</h3>`;
-  } else {
-    cardsSection.classList.remove('empty');
-  }
-}
-
 function checkOffTask(event) {
   if (event.target.classList.contains('checkbox')) {
-    toggleCheck();
+    toggleCheckDOM();
     var matchedTaskList = matchTaskList(event)
     var matchedTask = matchedTaskList.tasks.filter(function(task) {
       return parseInt(event.target.id) === task.id;
@@ -149,13 +114,27 @@ function checkOffTask(event) {
   }
 }
 
+function createEmptyMsg(allTaskLists) {
+  var message;
+  if (allTaskLists.length === 0) {
+    message = 'Create a to-do!'
+  }
+  if (filterUrgentBtn.classList.contains('active')){
+    message = 'No urgent to-dos';
+  }
+  if (searchInput.value !== '') {
+    message = 'No search results';
+  }
+  return message;
+}
+
 function createTaskList() {
   var taskList = new ToDoList(taskTitleInput.value, tasks);
   taskList.saveToStorage();
   resetTasks();
   loadCards();
   resizeAllGridItems();
-  validateMakeTaskList();
+  validateMakeTaskListBtn();
   clearBtn.setAttribute('disabled', 'disabled');
 }
 
@@ -164,8 +143,10 @@ function deleteCard(e) {
     e.target.closest('.card').remove()
     var allTaskLists = getAllSavedTasks();
     var matchedTaskList = matchTaskList(event)
-    matchedTaskList.deleteFromStorage()
-    checkForEmpty();
+    matchedTaskList.deleteFromStorage();
+    allTaskLists.splice(allTaskLists.indexOf(matchedTaskList), 1);
+    renderEmptyMsg(allTaskLists);
+    validateFilterUrgentBtn(allTaskLists);
   }
 }
 
@@ -186,14 +167,14 @@ function filterByTitle(task) {
 
 function filterByTitleAndTask(taskList) {
   var matched = false;
-  for (var i = 0; i < taskList.tasks.length; i++){
-    if (taskList.tasks[i].text.toLowerCase().includes(searchInput.value.toLowerCase())) {
+  taskList.tasks.forEach(function(task) {
+    if (task.text.toLowerCase().includes(searchInput.value.toLowerCase())) {
       matched = true;
-    }
+    };
     if (taskList.title.toLowerCase().includes(searchInput.value.toLowerCase())) {
       matched = true;
-    }
-  }
+    };
+  });
   return matched;
 }
 
@@ -206,12 +187,7 @@ function filterCards() {
   } else if (searchInput.placeholder === 'Search all') {
     renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitleAndTask)))
   }
-  if (cardsSection.innerHTML === '') {
-    cardsSection.classList.add('empty');
-    cardsSection.innerHTML = `<h3>No search results</h3>`;
-  } else {
-    cardsSection.classList.remove('empty');
-  }
+  renderEmptyMsg(allTaskLists)
 }
 
 function filterUrgentSearch(list){
@@ -229,10 +205,33 @@ function getAllSavedTasks() {
   return allTaskLists;
 }
 
+function hydrateCardClone(cardClone, allTaskLists, i) {
+  if (allTaskLists[i].urgent) {
+    cardClone.querySelector('.card').classList.add('urgent-card')
+  }
+  if (validateDelete(allTaskLists[i])) {
+    cardClone.querySelector('.card-delete-icon').classList.add('active')
+  }
+  cardClone.querySelector('.card').id = allTaskLists[i].id
+  cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+}
+
+function hydrateTask(taskClone, task) {
+  taskClone.querySelector('p').textContent = task.text;
+  if (task.done === false) {
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
+  } else {
+    taskClone.querySelector('li').classList.add('checked');
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
+  }
+  taskClone.querySelector('img').id = task.id;
+}
+
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
   renderCardsHTML(allTaskLists);
-  checkForEmpty(allTaskLists);
+  renderEmptyMsg(allTaskLists);
+  validateFilterUrgentBtn(allTaskLists);
 }
 
 function matchTask(e, matchedTaskList) {
@@ -257,7 +256,7 @@ function makeUrgent(e) {
   if (e.target.parentElement.classList.contains('card-urgent-icon')) {
     var card = e.target.parentElement.parentElement.parentElement
     var matchedTaskList = matchTaskList(event)
-    toggleUrgent(card, matchedTaskList);
+    toggleUrgentData(card, matchedTaskList);
     matchedTaskList.updateToDo();
   }
 }
@@ -277,13 +276,13 @@ function reinstantiateAllTasksList(allTaskLists) {
 
 function removeTaskFromDrafts(e) {
   if (e.target.classList.contains('delete-task')) {
-    removeTaskFromDraftModeStorage(e);
+    removeTaskFromDraftModeData(e);
     e.target.parentNode.remove();
   };
-  validateMakeTaskList()
+  validateMakeTaskListBtn()
 }
 
-function removeTaskFromDraftModeStorage(e) {
+function removeTaskFromDraftModeData(e) {
   tasks.forEach(function(task, i){
     if (e.target.parentElement.innerText === task.text) {
       tasks.splice(i, 1)
@@ -291,50 +290,48 @@ function removeTaskFromDraftModeStorage(e) {
   });
 }
 
-function hydrateClone(cardClone, allTaskLists, i) {
-  if (allTaskLists[i].urgent) {
-    cardClone.querySelector('.card').classList.add('urgent-card')
-  }
-  if (validateDelete(allTaskLists[i])) {
-    cardClone.querySelector('.card-delete-icon').classList.add('active')
-  }
-  cardClone.querySelector('.card').id = allTaskLists[i].id
-  cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+function renderAndResizeCards(allTaskLists) {
+  renderCardsHTML(allTaskLists);
+  resizeAllGridItems();
 }
-
 
 function renderCardsHTML(allTaskLists) {
   cardsSection.innerHTML = '';
   for (var i = allTaskLists.length - 1; i >= 0; i--){
     var cardClone = document.importNode(document.querySelector('#task-card').content, true);
-    hydrateClone(cardClone, allTaskLists, i)
-    makeTasksHTML(allTaskLists, i, cardClone)
+    hydrateCardClone(cardClone, allTaskLists, i)
+    renderTasksHTML(allTaskLists, i, cardClone)
     cardsSection.appendChild(cardClone);
   }
 }
 
-function makeTasksHTML(allTaskLists, i, clone) {
+function renderEmptyMsg(allTaskLists) {
+  var renderedMsg = createEmptyMsg(allTaskLists);
+  if (cardsSection.firstElementChild === null) {
+    cardsSection.classList.add('empty');
+    cardsSection.innerHTML = `<h3>${renderedMsg}</h3>`;
+  } else {
+    cardsSection.classList.remove('empty');
+  };
+}
+
+function renderTasksHTML(allTaskLists, i, clone) {
   allTaskLists[i].tasks.forEach(function(task, i){
     var taskClone = document.importNode(document.querySelector('#task-item').content, true);
     hydrateTask(taskClone, task)
     clone.querySelector('ul').appendChild(taskClone);
-  })
+  });
 }
 
-function hydrateTask(taskClone, task) {
-  taskClone.querySelector('p').textContent = task.text;
-  if (task.done === false) {
-    taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
-  } else {
-    taskClone.querySelector('li').classList.add('checked');
-    taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
-  }
-  taskClone.querySelector('img').id = task.id;
-}
-
-function renderAndResizeCards(allTaskLists) {
-  renderCardsHTML(allTaskLists);
-  resizeAllGridItems();
+function renderUrgent(e) {
+  if (e.target.parentElement.classList.contains('card-urgent-icon') && filterUrgentBtn.classList.contains('active')) {
+    var allTaskLists = getAllSavedTasks();
+    var urgentTaskList = allTaskLists.filter(function(task) {
+      return task.urgent
+    });
+    renderAndResizeCards(urgentTaskList);
+    renderEmptyMsg(allTaskLists);
+  };
 }
 
 function resetTasks() {
@@ -345,9 +342,9 @@ function resetTasks() {
 
 function resizeAllGridItems(){
   var allItems = document.querySelectorAll(".card");
-  for (var i = 0; i < allItems.length; i++) {
-    resizeGridItem(allItems[i]);
-  }
+  allItems.forEach(function(item) {
+    resizeGridItem(item);
+  });
 }
 
 function resizeGridItem(item){
@@ -361,7 +358,7 @@ function showMenu() {
   dropDownContent.classList.toggle('show')
 }
 
-function toggleCheck() {
+function toggleCheckDOM() {
   if (event.target.parentElement.classList.contains('checked')) {
     event.target.parentElement.classList.remove('checked');
     event.target.src = './assets/checkbox.svg';
@@ -371,7 +368,7 @@ function toggleCheck() {
   }
 }
 
-function toggleDisplayUrgentCards() {
+function toggleUrgentCardsDOM() {
   filterUrgentBtn.classList.toggle('active');
   var allTaskLists = getAllSavedTasks();
   var urgentTaskList = allTaskLists.filter(function(task) {
@@ -383,10 +380,9 @@ function toggleDisplayUrgentCards() {
     cardsSection.classList.remove('empty');
     renderAndResizeCards(allTaskLists)
   }
-
 }
 
-function toggleUrgent(card, matchedTaskList) {
+function toggleUrgentData(card, matchedTaskList) {
   if (card.classList.contains('urgent-card')) {
     card.classList.remove('urgent-card')
   } else {
@@ -409,7 +405,7 @@ function validateDelete(taskList) {
   return validated;
 }
 
-function validateMakeTaskList() {
+function validateMakeTaskListBtn() {
   if (tasks.length > 0 && taskTitleInput.value !== '') {
     makeTaskList.removeAttribute('disabled')
   } else {
@@ -420,10 +416,18 @@ function validateMakeTaskList() {
   }
 }
 
-function validateTaskInput() {
+function validateAddTaskBtn() {
   if (addTaskInput.value !== '') {
     addTaskButton.removeAttribute('disabled');
   } else {
     addTaskButton.setAttribute('disabled', 'disabled');
+  }
+}
+
+function validateFilterUrgentBtn(allTaskLists) {
+  if (allTaskLists.length > 0) {
+    filterUrgentBtn.removeAttribute('disabled');
+  } else {
+    filterUrgentBtn.setAttribute('disabled', 'disabled');
   }
 }
