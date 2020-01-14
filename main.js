@@ -302,7 +302,7 @@ function renderEmptyMsg(allTaskLists) {
 }
 
 function renderTasksHTML(allTaskLists, i, clone) {
-  allTaskLists[i].tasks.forEach(function(task, i){
+  allTaskLists[i].tasks.forEach(function(task){
     var taskClone = document.importNode(document.querySelector('#task-item').content, true);
     hydrateTask(taskClone, task);
     clone.querySelector('ul').appendChild(taskClone);
