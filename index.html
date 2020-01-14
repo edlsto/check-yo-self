@@ -14,7 +14,7 @@
         <input placeholder="Search all" class="search-input"></input>
         <button type="button" class="drop-down-btn"><img src='./assets/drop-down-arrow.svg' class="drop-down"></button>
         <div class="dropdown">
-          <div id="myDropdown" class="dropdown-content">
+          <div id="drop-down" class="dropdown-content">
             <p class="filter-option filter-title" id="filteredTaskList">Filter by title</p>
             <p class="filter-option filter-task" id="filteredTasks">Filter by task</p>
             <p class="filter-option filter-all active-search" id="filteredByTitleAndTask">Search all</p>
@@ -24,16 +24,16 @@
     </nav>
     <section class="dashboard">
       <div class="task-title">
-        <label>Task Title</label>
-        <input class="dashboard-input"></input>
+        <label for="dashboard-input">Task Title</label>
+        <input class="dashboard-input" id="dashboard-input"></input>
       </div>
       <div class="task-list">
         <ul class="task-list-inner">
         </ul>
       </div>
       <div class="task-item">
-        <label>Task Item</label>
-        <input class="dashboard-input task-item-input"></input>
+        <label for="task-item-input">Task Item</label>
+        <input class="dashboard-input task-item-input" id="task-item-input"></input>
         <button class="add dashboard-button" disabled="disabled">
           <div class="plus-1"></div>
           <div class="plus-2"></div>
