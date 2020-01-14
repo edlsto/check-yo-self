@@ -71,11 +71,12 @@ function addTaskDraftMode() {
 function addTaskInCard(e) {
   if (e.target.classList.contains('new-task-input') && e.key === 'Enter' && /[^\s-]/.test(e.target.value)) {
     var task = new Task(e.target.value);
-    matchTaskList(event).tasks.push(task)
+    var matchedTaskList = matchTaskList(event)
+    matchedTaskList.tasks.push(task)
     e.target.previousElementSibling.innerHTML +=`<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
     e.target.value = '';
     resizeAllGridItems();
-    matchTaskList(event).updateToDo();
+    matchedTaskList.updateToDo();
   };
 }
 
