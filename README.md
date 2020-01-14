@@ -17,6 +17,9 @@ Technologies used:
 - CSS
 - JavaScript
 
+Wins:
+- I implemented template tags rather than injecting HTML via JavaScript.
+
 # Screenshots of comp and our app
 Comp:  
 ![Final Screenshot](assets/comp.png)
