@@ -227,12 +227,12 @@ button[disabled] {
 /* CARD AREA STYLES */
 
 
-.card-task-item:hover,
+.card-task-item-text:hover,
 .card-title:hover {
   cursor: pointer;
 }
 
-.card-task-item:focus,
+.card-task-item-text:focus,
 .card-title:focus {
   cursor: text;
 }
