@@ -49,6 +49,29 @@
     <section class="cards">
     </section>
   </body>
+  <template id="task-card">
+    <div class="card" id="">
+      <div class="content">
+        <h2 contenteditable="true" class="card-title"></h2>
+        <ul>
+        </ul>
+        <input class="new-task-input" placeholder="Add new task"></input>
+      </div>
+      <div class="icon-row">
+        <div class="card-urgent-icon">
+          <img src="./assets/urgent.svg">
+          <p>Urgent</p>
+        </div>
+        <div class="card-delete-icon">
+          <img src="./assets/delete.svg">
+          <p>Delete</p>
+        </div>
+      </div>
+    </div>
+  </template>
+  <template id="task-item">
+    <li><img src="" class="checkbox" id="" class="check-image"><p contenteditable="true" class="card-task-item-text"></p></li>
+  </template>
   <script type="text/javascript" src="task.js"></script>
   <script type="text/javascript" src="todo-list.js"></script>
   <script type="text/javascript" src="main.js"></script>

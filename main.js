@@ -127,6 +127,7 @@ function checkForTaskMatch (taskList) {
 }
 
 function checkNoUrgentItems() {
+  console.log(cardsSection)
   if (cardsSection.innerHTML === '' || cardsSection.firstElementChild.innerText === 'No search results') {
     cardsSection.classList.add('empty');
     cardsSection.innerHTML = `<h3>No urgent to-dos</h3>`;
@@ -230,7 +231,7 @@ function getAllSavedTasks() {
 
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
-  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  renderCardsHTML(allTaskLists);
   checkForEmpty(allTaskLists);
 }
 
@@ -250,16 +251,6 @@ function makeEdits(e, matchedTaskList) {
     matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].text = e.target.innerText;
     matchedTaskList.updateTask(parseInt(e.target.parentElement.firstElementChild.id));
   }
-}
-
-function makeTaskListHTML(taskList) {
-  var taskListHTML = '';
-  for (var i = 0; i < taskList.tasks.length; i++) {
-    var task = taskList.tasks[i].text;
-    var html = `<li class="card-task-item${taskList.tasks[i].done === false ? '' : ' checked'}"><img src="./assets/${taskList.tasks[i].done === false ? 'checkbox' : 'checkbox-active'}.svg" class="checkbox" id="${taskList.tasks[i].id}"><p contenteditable="true" class="card-task-item-text">${task}</p></li>`
-    taskListHTML += html;
-  }
-  return taskListHTML;
 }
 
 function makeUrgent(e) {
@@ -300,35 +291,49 @@ function removeTaskFromDraftModeStorage(e) {
   });
 }
 
-function renderCardsHTML(allTaskLists) {
-  var cardsHTML = ''
-  for (var i = allTaskLists.length - 1; i >= 0; i--){
-    cardsHTML +=
-    `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
-      <div class="content">
-        <h2 contenteditable="true" class="card-title">${allTaskLists[i].title}</h2>
-          <ul>
-            ${makeTaskListHTML(allTaskLists[i])}
-          </ul>
-          <input class="new-task-input" placeholder="Add new task"></input>
-          </div>
-          <div class="icon-row">
-            <div class="card-urgent-icon">
-              <img src="./assets/urgent.svg">
-              <p>Urgent</p>
-            </div>
-            <div class="card-delete-icon${validateDelete(allTaskLists[i]) ? ' active' : ''}">
-              <img src="./assets/delete.svg">
-              <p>Delete</p>
-            </div>
-          </div>
-    </div>`
+function hydrateClone(cardClone, allTaskLists, i) {
+  if (allTaskLists[i].urgent) {
+    cardClone.querySelector('.card').classList.add('urgent-card')
   }
-  return cardsHTML;
+  if (validateDelete(allTaskLists[i])) {
+    cardClone.querySelector('.card-delete-icon').classList.add('active')
+  }
+  cardClone.querySelector('.card').id = allTaskLists[i].id
+  cardClone.querySelector('.card-title').textContent = allTaskLists[i].title;
+}
+
+
+function renderCardsHTML(allTaskLists) {
+  cardsSection.innerHTML = '';
+  for (var i = allTaskLists.length - 1; i >= 0; i--){
+    var cardClone = document.importNode(document.querySelector('#task-card').content, true);
+    hydrateClone(cardClone, allTaskLists, i)
+    makeTasksHTML(allTaskLists, i, cardClone)
+    cardsSection.appendChild(cardClone);
+  }
+}
+
+function makeTasksHTML(allTaskLists, i, clone) {
+  allTaskLists[i].tasks.forEach(function(task, i){
+    var taskClone = document.importNode(document.querySelector('#task-item').content, true);
+    hydrateTask(taskClone, task)
+    clone.querySelector('ul').appendChild(taskClone);
+  })
+}
+
+function hydrateTask(taskClone, task) {
+  taskClone.querySelector('p').textContent = task.text;
+  if (task.done === false) {
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox.svg')
+  } else {
+    taskClone.querySelector('li').classList.add('checked');
+    taskClone.querySelector('img').setAttribute('src', './assets/checkbox-active.svg');
+  }
+  taskClone.querySelector('img').id = task.id;
 }
 
 function renderAndResizeCards(allTaskLists) {
-  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  renderCardsHTML(allTaskLists);
   resizeAllGridItems();
 }
 
@@ -378,6 +383,7 @@ function toggleDisplayUrgentCards() {
     cardsSection.classList.remove('empty');
     renderAndResizeCards(allTaskLists)
   }
+
 }
 
 function toggleUrgent(card, matchedTaskList) {
