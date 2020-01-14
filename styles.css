@@ -71,7 +71,7 @@ input {
   font-size: 1em;
   height: 100%;
   padding-left: .7em;
-  width: 20em;
+  width: 20em
 }
 
 span {
@@ -87,17 +87,25 @@ img {
 .search-box {
   align-items: stretch;
   display: flex;
-  height: 3em;
+  height: 48px;
+  width: 400px;
+  justify-content: flex-end;
 }
 
 .search-box button {
   flex: 0 0 4em;
+  cursor: default;
+}
+
+.search-box button.drop-down-btn {
+  cursor: pointer;
 }
 
 button {
   background-color: #C8D3DA;
   border: 0;
   outline: 0;
+  cursor: pointer;
 }
 
 .drop-down {
@@ -110,8 +118,8 @@ button {
   display: none;
   position: absolute;
   right: 0;
-  top: 45px;
-  width: 23.75em;
+  top: 48px;
+  width: 400px;
   z-index: 1;
 }
 
@@ -125,6 +133,11 @@ button {
   height: 3em;
   line-height: 3em;
   text-align: center;
+  border-bottom: 1px solid lightgray;
+}
+
+.dropdown.content:last-child {
+  border-bottom: 0;
 }
 
 .dropdown {
@@ -266,6 +279,14 @@ h3 {
   color: #B23A23;
 }
 
+.card-urgent-icon {
+  cursor: pointer;
+}
+
+.card-delete-icon {
+  cursor: pointer;
+}
+
 .urgent-card .card-delete-icon p {
   color: #1F1F3D;
 }
@@ -312,11 +333,9 @@ li {
 
 .icon-row p {
   color: #3C6577;
-  cursor: default;
   font-size: .8em;
   margin-top: .3em;
   text-transform: uppercase;
-
 }
 
 .icon-row div {
@@ -326,7 +345,7 @@ li {
 }
 
 li img {
-  cursor: default;
+  cursor: pointer;
   height: 1.3em;
 }
 
