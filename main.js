@@ -13,6 +13,7 @@ var tasks = [];
 var taskTitleInput = document.querySelector('.dashboard-input');
 var filterOptions = document.querySelectorAll('.filter-option');
 
+
 addTaskButton.addEventListener('click', addTask);
 addTaskInput.addEventListener('keyup', validateTaskInput)
 cardsSection.addEventListener('click', function(){
@@ -142,6 +143,7 @@ function checkOffTask(event) {
     var matchedTask = matchedTaskList.tasks.filter(function(task) {
       return parseInt(event.target.id) === task.id;
     })[0]
+    debugger;
     matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done = !matchedTaskList.tasks[matchedTaskList.tasks.indexOf(matchedTask)].done
     matchedTaskList.updateTask(event.target.id);
     activateDeleteBtn(matchedTaskList);
@@ -230,7 +232,7 @@ function getAllSavedTasks() {
 
 function loadCards() {
   var allTaskLists = getAllSavedTasks();
-  cardsSection.innerHTML = renderCardsHTML(allTaskLists);
+  renderCardsHTML(allTaskLists);
   checkForEmpty(allTaskLists);
 }
 
@@ -301,30 +303,32 @@ function removeTaskFromDraftModeStorage(e) {
 }
 
 function renderCardsHTML(allTaskLists) {
-  var cardsHTML = ''
   for (var i = allTaskLists.length - 1; i >= 0; i--){
-    cardsHTML +=
-    `<div class="card${allTaskLists[i].urgent ? ' urgent-card' : ''}" id="${allTaskLists[i].id}">
-      <div class="content">
-        <h2 contenteditable="true" class="card-title">${allTaskLists[i].title}</h2>
-          <ul>
-            ${makeTaskListHTML(allTaskLists[i])}
-          </ul>
-          <input class="new-task-input" placeholder="Add new task"></input>
-          </div>
-          <div class="icon-row">
-            <div class="card-urgent-icon">
-              <img src="./assets/urgent.svg">
-              <p>Urgent</p>
-            </div>
-            <div class="card-delete-icon${validateDelete(allTaskLists[i]) ? ' active' : ''}">
-              <img src="./assets/delete.svg">
-              <p>Delete</p>
-            </div>
-          </div>
-    </div>`
+    var clone = document.importNode(document.querySelector('#task-card').content, true);
+    if (allTaskLists[i].urgent) {
+      clone.querySelector('.card').classList.add('urgent-card')
+    }
+    if (validateDelete(allTaskLists[i])) {
+      clone.querySelector('.card-delete-icon').classList.add('active')
+    }
+    clone.querySelector('.card').id = allTaskLists[i].id
+    clone.querySelector('.card-title').textContent = allTaskLists[i].title;
+    // clone.querySelector('ul').innerHTML = makeTaskListHTML(allTaskLists[i]);
+    allTaskLists[i].tasks.forEach(function(task, i){
+      var clone2 = document.importNode(document.querySelector('#task-item').content, true);
+      clone2.querySelector('p').textContent = task.text;
+      if (task.done === false) {
+        clone2.querySelector('li').classList.add('checked')
+        clone2.querySelector('img').setAttribute('src', './assets/checkbox.svg')
+      } else {
+        clone2.querySelector('img').setAttribute('src', './assets/checkbox-active.svg')
+      }
+      clone2.querySelector('li').id = task.id;
+      clone.querySelector('ul').appendChild(clone2);
+
+    })
+    cardsSection.appendChild(clone);
   }
-  return cardsHTML;
 }
 
 function renderAndResizeCards(allTaskLists) {
