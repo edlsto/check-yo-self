@@ -20,7 +20,7 @@ Technologies used:
 Wins:
 - I implemented template tags rather than injecting HTML via JavaScript.
 
-# Screenshots of comp and our app
+# Screenshots of comp and my app
 Comp:  
 ![Final Screenshot](assets/comp.png)
 
