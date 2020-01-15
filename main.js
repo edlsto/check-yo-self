@@ -194,6 +194,7 @@ function getAllSavedTasks() {
 function hydrateCardClone(cardClone, allTaskLists, i) {
   if (allTaskLists[i].urgent) {
     cardClone.querySelector('.card').classList.add('urgent-card')
+    cardClone.querySelector('.card-urgent-icon img').setAttribute('src', './assets/urgent-active.svg');
   }
   if (validateDelete(allTaskLists[i])) {
     cardClone.querySelector('.card-delete-icon').classList.add('active')
@@ -242,7 +243,7 @@ function makeUrgent(e) {
   if (e.target.parentElement.classList.contains('card-urgent-icon')) {
     var card = e.target.parentElement.parentElement.parentElement
     var matchedTaskList = matchTaskList(e)
-    toggleUrgentData(card, matchedTaskList);
+    toggleUrgentData(card, matchedTaskList, e);
     matchedTaskList.updateToDo();
   }
 }
@@ -368,11 +369,15 @@ function toggleUrgentCardsDOM() {
   }
 }
 
-function toggleUrgentData(card, matchedTaskList) {
+function toggleUrgentData(card, matchedTaskList, e) {
+  console.log()
+
   if (card.classList.contains('urgent-card')) {
     card.classList.remove('urgent-card')
+    e.target.parentElement.firstElementChild.src = 'assets/urgent.svg'
   } else {
     card.classList.add('urgent-card')
+    e.target.parentElement.firstElementChild.src = 'assets/urgent-active.svg'
   }
   if (matchedTaskList.urgent === false) {
     matchedTaskList.urgent = true;
