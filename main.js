@@ -7,7 +7,6 @@ var dropDownContent = document.querySelector('.dropdown-content');
 var filterOptions = document.querySelectorAll('.filter-option');
 var filterUrgentBtn = document.querySelector('.urgency');
 var makeTaskList = document.querySelector('.make-task-list');
-var newTaskInput = document.querySelector('.new-task-input')
 var searchInput = document.querySelector('.search-input');
 var taskListContainer = document.querySelector('.task-list-inner');
 var tasks = [];
@@ -15,13 +14,13 @@ var taskTitleInput = document.querySelector('.dashboard-input');
 
 addTaskButton.addEventListener('click', addTaskDraftMode);
 addTaskInput.addEventListener('keyup', validateAddTaskBtn)
-cardsSection.addEventListener('click', function(e){
+cardsSection.addEventListener('click', function(e) {
   deleteCard(e);
   checkOffTask(e);
   makeUrgent(e);
   renderUrgent(e);
 });
-cardsSection.addEventListener('keypress', function(e){
+cardsSection.addEventListener('keypress', function(e) {
   editContent(e);
   addTaskInCard(e);
 });
@@ -37,7 +36,7 @@ filterUrgentBtn.addEventListener('click', function(e) {
 });
 makeTaskList.addEventListener('click', createTaskList);
 searchInput.addEventListener('keyup', filterCards);
-taskListContainer.addEventListener('click', function(e){
+taskListContainer.addEventListener('click', function(e) {
   removeTaskFromDrafts(e);
 });
 taskTitleInput.addEventListener('keyup', validateMakeTaskListBtn);
@@ -45,7 +44,7 @@ window.addEventListener("resize", resizeAllGridItems);
 
 loadCards();
 
-setTimeout(function(){
+setTimeout(function() {
   resizeAllGridItems();
 }, 30);
 
@@ -55,7 +54,7 @@ function activateDeleteBtn(matchedTaskList, e) {
     deleteBtn.classList.add('active')
   } else {
     deleteBtn.classList.remove('active')
-  };
+  }
 }
 
 function addTaskDraftMode() {
@@ -73,22 +72,22 @@ function addTaskInCard(e) {
     var task = new Task(e.target.value);
     var matchedTaskList = matchTaskList(e)
     matchedTaskList.tasks.push(task)
-    e.target.previousElementSibling.innerHTML +=`<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
+    e.target.previousElementSibling.innerHTML += `<li class="card-task-item"><img src="./assets/checkbox.svg" class="checkbox" id="${task.id}"><p contenteditable="true" class="card-task-item-text">${e.target.value}</p></li>`
     e.target.value = '';
     resizeAllGridItems();
     matchedTaskList.updateToDo();
-  };
+  }
 }
 
 function changeSearchType(e) {
-  if(e.target.classList.contains('filter-option')) {
-    filterOptions.forEach(function(option){
+  if (e.target.classList.contains('filter-option')) {
+    filterOptions.forEach(function(option) {
       option.classList.remove('active-search');
     });
     e.target.classList.add('active-search');
     searchInput.placeholder = e.target.innerText;
     e.target.parentElement.classList.remove('show');
-  };
+  }
 }
 
 function checkOffTask(e) {
@@ -109,7 +108,7 @@ function createEmptyMsg(allTaskLists) {
   if (allTaskLists.length === 0) {
     message = 'Create a to-do!'
   }
-  if (filterUrgentBtn.classList.contains('active')){
+  if (filterUrgentBtn.classList.contains('active')) {
     message = 'No urgent to-dos';
   }
   if (searchInput.value !== '') {
@@ -161,7 +160,7 @@ function filterByTitle(task) {
 }
 
 function filterByTitleAndTask(taskList) {
-    return filterByTask(taskList) || filterByTitle(taskList)
+  return filterByTask(taskList) || filterByTitle(taskList)
 }
 
 function filterCards() {
@@ -176,8 +175,8 @@ function filterCards() {
   renderEmptyMsg(allTaskLists)
 }
 
-function filterUrgentSearch(list){
-  if (filterUrgentBtn.classList.contains('active')){
+function filterUrgentSearch(list) {
+  if (filterUrgentBtn.classList.contains('active')) {
     list = list.filter(function(task) {
       return task.urgent
     })
@@ -255,7 +254,7 @@ function matchTaskList(e) {
 
 function reinstantiateAllTasksList(allTaskLists) {
   var allTaskListsWithMethods = [];
-  allTaskLists.forEach(function(taskList){
+  allTaskLists.forEach(function(taskList) {
     allTaskListsWithMethods.push(new ToDoList(taskList.title, taskList.tasks, taskList.id, taskList.urgent));
   })
   return allTaskListsWithMethods;
@@ -265,15 +264,15 @@ function removeTaskFromDrafts(e) {
   if (e.target.classList.contains('delete-task')) {
     removeTaskFromDraftModeData(e);
     e.target.parentNode.remove();
-  };
+  }
   validateMakeTaskListBtn();
 }
 
 function removeTaskFromDraftModeData(e) {
-  tasks.forEach(function(task, i){
+  tasks.forEach(function(task, i) {
     if (e.target.parentElement.innerText === task.text) {
       tasks.splice(i, 1);
-    };
+    }
   });
 }
 
@@ -284,12 +283,12 @@ function renderAndResizeCards(allTaskLists) {
 
 function renderCardsHTML(allTaskLists) {
   cardsSection.innerHTML = '';
-  for (var i = allTaskLists.length - 1; i >= 0; i--){
+  for (var i = allTaskLists.length - 1; i >= 0; i--) {
     var cardClone = document.importNode(document.querySelector('#task-card').content, true);
     hydrateCardClone(cardClone, allTaskLists, i);
     renderTasksHTML(allTaskLists, i, cardClone);
     cardsSection.appendChild(cardClone);
-  };
+  }
 }
 
 function renderEmptyMsg(allTaskLists) {
@@ -299,11 +298,11 @@ function renderEmptyMsg(allTaskLists) {
     cardsSection.innerHTML = `<h3>${renderedMsg}</h3>`;
   } else {
     cardsSection.classList.remove('empty');
-  };
+  }
 }
 
 function renderTasksHTML(allTaskLists, i, clone) {
-  allTaskLists[i].tasks.forEach(function(task){
+  allTaskLists[i].tasks.forEach(function(task) {
     var taskClone = document.importNode(document.querySelector('#task-item').content, true);
     hydrateTask(taskClone, task);
     clone.querySelector('ul').appendChild(taskClone);
@@ -318,7 +317,7 @@ function renderUrgent(e) {
     });
     renderAndResizeCards(urgentTaskList);
     renderEmptyMsg(allTaskLists);
-  };
+  }
 }
 
 function resetTasks() {
@@ -327,17 +326,17 @@ function resetTasks() {
   taskListContainer.innerHTML = '';
 }
 
-function resizeAllGridItems(){
+function resizeAllGridItems() {
   var allItems = document.querySelectorAll(".card");
   allItems.forEach(function(item) {
     resizeGridItem(item);
   });
 }
 
-function resizeGridItem(item){
-  rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
-  rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
-  rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height + rowGap + 70)/(rowHeight + rowGap));
+function resizeGridItem(item) {
+  var rowHeight = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-auto-rows'));
+  var rowGap = parseInt(window.getComputedStyle(cardsSection).getPropertyValue('grid-row-gap'));
+  var rowSpan = Math.ceil((item.querySelector('.content').getBoundingClientRect().height + rowGap + 70) / (rowHeight + rowGap));
   item.style.gridRowEnd = "span " + rowSpan;
 }
 
