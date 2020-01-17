@@ -100,10 +100,8 @@ function checkOffTask(e) {
 }
 
 function createEmptyMsg(allTaskLists) {
-  var message = allTaskLists.length === 0 ? 'Create a to-do!' : '';
-  message = filterUrgentBtn.classList.contains('active') ? 'No urgent to-dos' : message;
-  message = searchInput.value !== '' ? 'No search results' : message;
-  return message;
+  var message = filterUrgentBtn.classList.contains('active') ? 'No urgent to-dos' : 'Create a to-do!';
+  return searchInput.value !== '' ? 'No search results' : message;
 }
 
 function createTaskList() {
@@ -150,15 +148,14 @@ function filterByTitleAndTask(taskList) {
 }
 
 function filterCards() {
-  var allTaskLists = getAllSavedTasks();
   if (searchInput.placeholder === 'Filter by task') {
-    renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTask)))
+    renderAndResizeCards(filterUrgentSearch(getAllSavedTasks().filter(filterByTask)))
   } else if (searchInput.placeholder === 'Filter by title') {
-    renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitle)))
+    renderAndResizeCards(filterUrgentSearch(getAllSavedTasks().filter(filterByTitle)))
   } else if (searchInput.placeholder === 'Search all') {
-    renderAndResizeCards(filterUrgentSearch(allTaskLists.filter(filterByTitleAndTask)))
+    renderAndResizeCards(filterUrgentSearch(getAllSavedTasks().filter(filterByTitleAndTask)))
   }
-  renderEmptyMsg(allTaskLists)
+  renderEmptyMsg(getAllSavedTasks())
 }
 
 function filterUrgentSearch(list) {
